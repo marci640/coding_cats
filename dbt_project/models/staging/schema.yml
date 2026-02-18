@@ -77,3 +77,57 @@ models:
         data_type: TIMESTAMP
         tests:
           - not_null
+
+  - name: stg_benefit_features
+    description: >
+      Staged benefit feature flags.
+      Each row represents a benefit tier with boolean flags for available features.
+      Adds total_features computed column and processed_at timestamp.
+      Source: benefit_features seed.
+    columns:
+      - name: benefit
+        description: "Benefit tier name (Primary Key). Joins to stg_plans.benefit."
+        data_type: VARCHAR
+        tests:
+          - unique
+          - not_null
+      - name: email_support
+        description: "Whether email support is included"
+        data_type: BOOLEAN
+        tests:
+          - not_null
+      - name: live_chat
+        description: "Whether live chat is included"
+        data_type: BOOLEAN
+        tests:
+          - not_null
+      - name: phone_support
+        description: "Whether phone support is included"
+        data_type: BOOLEAN
+        tests:
+          - not_null
+      - name: api_access
+        description: "Whether API access is included"
+        data_type: BOOLEAN
+        tests:
+          - not_null
+      - name: custom_integrations
+        description: "Whether custom integrations are included"
+        data_type: BOOLEAN
+        tests:
+          - not_null
+      - name: sla_guarantee
+        description: "Whether SLA guarantee is included"
+        data_type: BOOLEAN
+        tests:
+          - not_null
+      - name: total_features
+        description: "Count of enabled features (sum of all boolean flags cast to INT)"
+        data_type: INTEGER
+        tests:
+          - not_null
+      - name: processed_at
+        description: "Timestamp when dbt processed this row (CAST(CURRENT_TIMESTAMP AS TIMESTAMP))"
+        data_type: TIMESTAMP
+        tests:
+          - not_null

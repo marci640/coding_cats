@@ -1,0 +1,4 @@
+benefit,email_support,live_chat,phone_support,api_access,custom_integrations,sla_guarantee
+Standard support,true,false,false,false,false,false
+Priority support,true,true,true,true,false,false
+Dedicated account manager,true,true,true,true,true,true

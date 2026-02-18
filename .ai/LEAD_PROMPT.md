@@ -24,13 +24,31 @@ When a sprint is initialized, you MUST:
 Enforce a strict **Finish-to-Start** dependency chain:
 
 ```
-DevOps (Phase 0) → Architect → Transformer → Auditor
+DevOps (Phase 0) → Architect → Transformer → Auditor → DevOps (Phase 4)
 ```
 
 - Do NOT allow the Architect to begin unless `env_verified: true` is confirmed in `sprint_ledger.json`.
 - Do NOT allow the Transformer to begin unless `schema.yml` exists and was produced in the current sprint.
 - Do NOT allow the Auditor to begin unless the Transformer has committed a SQL model.
 - If any phase fails 3 times, halt and alert the Human-in-the-Loop.
+
+## 🚀 Auto-Pilot Execution
+When the TPM triggers a full sprint run, execute ALL phases sequentially in a single session. Read each agent file from `agents/` and execute its instructions directly:
+
+1. Read and execute `agents/04_devops.md` **Mode 1** (Phase 0 — environment gate)
+2. Read and execute `agents/01_architect.md` (Archie designs the schema contract)
+3. Read and execute `agents/02_transformer.md` (Bea writes the SQL)
+4. Read and execute `agents/03_auditor.md` (Audrey validates everything)
+5. Read and execute `agents/04_devops.md` **Mode 2** (Devin validates the DAG)
+
+**Quality Gate:** After each phase, verify the exit criteria before proceeding:
+- Phase 0: `env_verified: true` in ledger
+- Architect: `schema.yml` produced with all columns, types, tests, descriptions
+- Transformer: SQL files created, column names match schema.yml exactly
+- Auditor: `dbt test` passes with 0 failures
+- DevOps: DAG syntax valid, task chain correct
+
+If any phase fails, issue a Corrective Directive and retry (max 3 attempts). Do NOT proceed to the next phase until the current one passes.
 
 # DEFINITION OF DONE (DOD)
 - [ ] dbt model exists and adds `processed_at`.
