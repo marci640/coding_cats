@@ -2,11 +2,11 @@
   "project_metadata": {
     "project": "coding_cats",
     "current_version": "1.3.0",
-    "current_sprint": null,
+    "current_sprint": "none",
     "last_updated": "2026-02-18"
   },
   "environment_state": {
-    "python_version": "3.9",
+    "python_version": "3.11.6",
     "dbt_version": "1.10.5",
     "installed_drivers": ["dbt-core", "dbt-duckdb"],
     "database": "duckdb",
@@ -16,7 +16,8 @@
   "artifact_registry": {
     "seeds": [
       { "name": "raw_data", "path": "dbt_project/seeds/raw_data.csv", "schema": "main" },
-      { "name": "plans", "path": "dbt_project/seeds/plans.csv", "schema": "main" }
+      { "name": "plans", "path": "dbt_project/seeds/plans.csv", "schema": "main" },
+      { "name": "benefit_features", "path": "dbt_project/seeds/benefit_features.csv", "schema": "main" }
     ],
     "models": [
       {
@@ -33,6 +34,14 @@
         "materialization": "table",
         "schema": "main",
         "tests": 6,
+        "test_status": "passing"
+      },
+      {
+        "name": "stg_benefit_features",
+        "path": "dbt_project/models/staging/stg_benefit_features.sql",
+        "materialization": "table",
+        "schema": "main",
+        "tests": 8,
         "test_status": "passing"
       },
       {
@@ -56,7 +65,23 @@
       { "name": "dbt_csv_pipeline", "path": "dags/dbt_csv_dag.py", "schedule": "@daily" }
     ]
   },
-  "active_sprint": null,
+  "active_sprint": {
+    "sprint_id": "coding_cats_sprint_04",
+    "branch": "sprint_04",
+    "started": "2026-02-18",
+    "goals": [
+      "Add benefit_features.csv seed and stg_benefit_features model",
+      "Create int_plan_features joining stg_plans to stg_benefit_features",
+      "Add customer_tier to int_plans and filter out discount_amount = 0 or NULL"
+    ],
+    "technical_dependencies": [],
+    "phases": {
+      "01_architect": "complete",
+      "02_transformer": "complete",
+      "03_auditor": "complete",
+      "04_devops": "complete"
+    }
+  },
   "history": [
     {
       "version": "1.0.0",

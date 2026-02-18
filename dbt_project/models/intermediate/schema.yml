@@ -60,6 +60,8 @@ models:
       Intermediate plan-enriched customer data.
       Joins stg_raw_data to stg_plans on plan_type.
       Adds discount_amount as stg_raw_data.amount * 0.20.
+      Adds customer_tier: 'high_value' when amount >= 100, else 'standard'.
+      Filter: Excludes rows where discount_amount is 0 or NULL.
       Source: stg_raw_data JOIN stg_plans ON plan_type.
     columns:
       - name: id
@@ -100,8 +102,81 @@ models:
         data_type: "DECIMAL(10,2)"
         tests:
           - not_null
+      - name: customer_tier
+        description: "Customer value tier: 'high_value' if amount >= 100, else 'standard'"
+        data_type: VARCHAR
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['high_value', 'standard']
       - name: processed_at
         description: "Timestamp when dbt processed this row (inherited from stg_raw_data)"
+        data_type: TIMESTAMP
+        tests:
+          - not_null
+
+  - name: int_plan_features
+    description: >
+      Intermediate plan feature matrix.
+      Joins stg_plans to stg_benefit_features on benefit.
+      Enriches plans with feature flags and total feature count.
+      Source: stg_plans JOIN stg_benefit_features ON benefit.
+    columns:
+      - name: plan_type
+        description: "Subscription tier identifier (Primary Key): basic, premium, or enterprise"
+        data_type: VARCHAR
+        tests:
+          - unique
+          - not_null
+          - accepted_values:
+              values: ['basic', 'premium', 'enterprise']
+      - name: amount
+        description: "Plan list price in USD"
+        data_type: "DECIMAL(10,2)"
+        tests:
+          - not_null
+      - name: benefit
+        description: "Plan benefit description"
+        data_type: VARCHAR
+        tests:
+          - not_null
+      - name: email_support
+        description: "Whether email support is included"
+        data_type: BOOLEAN
+        tests:
+          - not_null
+      - name: live_chat
+        description: "Whether live chat is included"
+        data_type: BOOLEAN
+        tests:
+          - not_null
+      - name: phone_support
+        description: "Whether phone support is included"
+        data_type: BOOLEAN
+        tests:
+          - not_null
+      - name: api_access
+        description: "Whether API access is included"
+        data_type: BOOLEAN
+        tests:
+          - not_null
+      - name: custom_integrations
+        description: "Whether custom integrations are included"
+        data_type: BOOLEAN
+        tests:
+          - not_null
+      - name: sla_guarantee
+        description: "Whether SLA guarantee is included"
+        data_type: BOOLEAN
+        tests:
+          - not_null
+      - name: total_features
+        description: "Count of enabled features (from stg_benefit_features)"
+        data_type: INTEGER
+        tests:
+          - not_null
+      - name: processed_at
+        description: "Timestamp when dbt processed this row (inherited from stg_plans)"
         data_type: TIMESTAMP
         tests:
           - not_null

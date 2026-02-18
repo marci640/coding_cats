@@ -42,7 +42,15 @@ This single command causes the Lead Agent to:
 
 ### 3. Running the Agent Phases
 
-Each phase is triggered with a short command referencing the agent file:
+The Lead Agent can run all phases automatically in a single command:
+
+```
+Read #file:.ai/LEAD_PROMPT.md and CLAUDE.md. Run the full sprint.
+```
+
+This chains: DevOps (env check) → Architect → Transformer → Auditor → DevOps (DAG) with automatic quality gates between each phase.
+
+Alternatively, run phases individually:
 
 | Phase | Prompt |
 |-------|--------|
@@ -50,8 +58,6 @@ Each phase is triggered with a short command referencing the agent file:
 | **Transformer** | `run #file:agents/02_transformer.md` |
 | **Auditor** | `audit via #file:agents/03_auditor.md` |
 | **DevOps** | `execute #file:agents/04_devops.md` |
-
-That's it — one line per phase. Copilot reads the agent file and executes the instructions autonomously.
 
 ### 4. Continuous Governance
 

@@ -26,3 +26,12 @@ seeds:
         plan_type: VARCHAR
         amount: "DECIMAL(10,2)"
         benefit: VARCHAR
+    benefit_features:
+      +column_types:
+        benefit: VARCHAR
+        email_support: BOOLEAN
+        live_chat: BOOLEAN
+        phone_support: BOOLEAN
+        api_access: BOOLEAN
+        custom_integrations: BOOLEAN
+        sla_guarantee: BOOLEAN
