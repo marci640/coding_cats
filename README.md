@@ -60,10 +60,12 @@ That's it — one line per phase. Copilot reads the agent file and executes the 
 
 ### 5. Sprint Wrap-Up & Reset
 
-Once the PR is merged, run the closing protocol to archive requirements, purge temporary files, promote permanent rules to `CLAUDE.md`, and reset for the next sprint:
+Once all 4 agent phases pass, run the closing protocol **before merging the PR**. This archives the sprint summary into `docs/archive/`, promotes permanent rules to `CLAUDE.md`, updates the ledger, and resets for the next sprint:
 
 ```
-Use #file:.ai/LEAD_PROMPT.md to execute the Sprint Wrap-Up and reset for Sprint 03.
+Use #file:.ai/LEAD_PROMPT.md to execute the Sprint Wrap-Up.
 ```
+
+The wrap-up produces a `docs/archive/sprint_[N]_summary.md` containing business rules applied, artifacts produced, test results, and auditor findings — all committed as part of the PR.
 
 > **TPM Tip:** Any rule flagged as `Global` or `Permanent` in `SPRINT_REQUIREMENTS.md` is automatically promoted to `CLAUDE.md`

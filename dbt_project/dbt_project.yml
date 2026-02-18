@@ -21,3 +21,8 @@ seeds:
         signup_date: DATE
         plan_type: VARCHAR
         amount: "DECIMAL(10,2)"
+    plans:
+      +column_types:
+        plan_type: VARCHAR
+        amount: "DECIMAL(10,2)"
+        benefit: VARCHAR

@@ -1,0 +1,107 @@
+version: 2
+
+models:
+  - name: int_raw_data
+    description: >
+      Intermediate customer data.
+      Renames signup_date to registered_at.
+      Adds a literal status column ('ACTIVE' for all rows).
+      Source: stg_raw_data.
+    columns:
+      - name: id
+        description: "Unique customer identifier (Primary Key)"
+        data_type: INTEGER
+        tests:
+          - unique
+          - not_null
+      - name: name
+        description: "Customer full name"
+        data_type: VARCHAR
+        tests:
+          - not_null
+      - name: email
+        description: "Customer email address (unique per customer)"
+        data_type: VARCHAR
+        tests:
+          - unique
+          - not_null
+      - name: registered_at
+        description: "Date the customer signed up (renamed from signup_date)"
+        data_type: DATE
+        tests:
+          - not_null
+      - name: plan_type
+        description: "Subscription tier: basic, premium, or enterprise"
+        data_type: VARCHAR
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['basic', 'premium', 'enterprise']
+      - name: amount
+        description: "Subscription amount in USD"
+        data_type: "DECIMAL(10,2)"
+        tests:
+          - not_null
+      - name: status
+        description: "Customer status (literal 'ACTIVE' for all rows)"
+        data_type: VARCHAR
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['ACTIVE']
+      - name: processed_at
+        description: "Timestamp when dbt processed this row (inherited from stg_raw_data)"
+        data_type: TIMESTAMP
+        tests:
+          - not_null
+
+  - name: int_plans
+    description: >
+      Intermediate plan-enriched customer data.
+      Joins stg_raw_data to stg_plans on plan_type.
+      Adds discount_amount as stg_raw_data.amount * 0.20.
+      Source: stg_raw_data JOIN stg_plans ON plan_type.
+    columns:
+      - name: id
+        description: "Unique customer identifier (Primary Key, from stg_raw_data)"
+        data_type: INTEGER
+        tests:
+          - unique
+          - not_null
+      - name: name
+        description: "Customer full name"
+        data_type: VARCHAR
+        tests:
+          - not_null
+      - name: email
+        description: "Customer email address"
+        data_type: VARCHAR
+        tests:
+          - not_null
+      - name: plan_type
+        description: "Subscription tier: basic, premium, or enterprise"
+        data_type: VARCHAR
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['basic', 'premium', 'enterprise']
+      - name: amount
+        description: "Customer subscription amount in USD (from stg_raw_data)"
+        data_type: "DECIMAL(10,2)"
+        tests:
+          - not_null
+      - name: benefit
+        description: "Plan benefit description (from stg_plans)"
+        data_type: VARCHAR
+        tests:
+          - not_null
+      - name: discount_amount
+        description: "20% discount on customer amount (stg_raw_data.amount * 0.20)"
+        data_type: "DECIMAL(10,2)"
+        tests:
+          - not_null
+      - name: processed_at
+        description: "Timestamp when dbt processed this row (inherited from stg_raw_data)"
+        data_type: TIMESTAMP
+        tests:
+          - not_null

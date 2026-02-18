@@ -1,6 +1,7 @@
 """
 Airflow DAG: dbt_csv_pipeline
-Triggers a dbt run + test for the coding_cats staging pipeline.
+Triggers dbt seed, run, and test for the full coding_cats pipeline
+(staging + intermediate models).
 Schedule: Daily at 06:00 UTC
 """
 
@@ -31,11 +32,11 @@ DEFAULT_ARGS = {
 with DAG(
     dag_id="dbt_csv_pipeline",
     default_args=DEFAULT_ARGS,
-    description="Runs the coding_cats staging pipeline and executes tests.",
+    description="Runs the full coding_cats pipeline (staging + intermediate) and executes tests.",
     schedule="@daily",
     start_date=datetime(2025, 1, 1),
     catchup=False,
-    tags=["dbt", "csv", "staging"],
+    tags=["dbt", "csv", "staging", "intermediate"],
 ) as dag:
 
     dbt_seed = BashOperator(
@@ -50,7 +51,7 @@ with DAG(
         task_id="dbt_run",
         bash_command=(
             f"cd {DBT_PROJECT_DIR} && "
-            f"dbt run --models staging.stg_raw_data --profiles-dir {DBT_PROFILES_DIR}"
+            f"dbt run --profiles-dir {DBT_PROFILES_DIR}"
         ),
     )
 
@@ -58,7 +59,7 @@ with DAG(
         task_id="dbt_test",
         bash_command=(
             f"cd {DBT_PROJECT_DIR} && "
-            f"dbt test --models staging.stg_raw_data --profiles-dir {DBT_PROFILES_DIR}"
+            f"dbt test --profiles-dir {DBT_PROFILES_DIR}"
         ),
     )
 

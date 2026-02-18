@@ -1,7 +1,7 @@
 {
   "project_metadata": {
     "project": "coding_cats",
-    "current_version": "1.1.0",
+    "current_version": "1.3.0",
     "current_sprint": null,
     "last_updated": "2026-02-18"
   },
@@ -15,7 +15,8 @@
   },
   "artifact_registry": {
     "seeds": [
-      { "name": "raw_data", "path": "dbt_project/seeds/raw_data.csv", "schema": "main" }
+      { "name": "raw_data", "path": "dbt_project/seeds/raw_data.csv", "schema": "main" },
+      { "name": "plans", "path": "dbt_project/seeds/plans.csv", "schema": "main" }
     ],
     "models": [
       {
@@ -24,6 +25,30 @@
         "materialization": "table",
         "schema": "main",
         "tests": 10,
+        "test_status": "passing"
+      },
+      {
+        "name": "stg_plans",
+        "path": "dbt_project/models/staging/stg_plans.sql",
+        "materialization": "table",
+        "schema": "main",
+        "tests": 6,
+        "test_status": "passing"
+      },
+      {
+        "name": "int_raw_data",
+        "path": "dbt_project/models/intermediate/int_raw_data.sql",
+        "materialization": "table",
+        "schema": "main",
+        "tests": 12,
+        "test_status": "passing"
+      },
+      {
+        "name": "int_plans",
+        "path": "dbt_project/models/intermediate/int_plans.sql",
+        "materialization": "table",
+        "schema": "main",
+        "tests": 11,
         "test_status": "passing"
       }
     ],
@@ -66,6 +91,29 @@
         "Model reference: staging models use ref('raw_data') — no sources.yml needed."
       ],
       "archive_path": "docs/archive/sprint_02_summary.md"
+    },
+    {
+      "version": "1.2.0",
+      "sprint_id": "coding_cats_sprint_03",
+      "closed_date": "2026-02-18",
+      "branch": "sprint_03",
+      "goals": [
+        "Add plans.csv seed and stg_plans model",
+        "Create int_raw_data with status column and signup_date rename",
+        "Create int_plans with discount_amount via stg_raw_data JOIN stg_plans"
+      ],
+      "artifacts_promoted": [
+        "dbt_project/seeds/plans.csv",
+        "dbt_project/models/staging/schema.yml",
+        "dbt_project/models/staging/stg_plans.sql",
+        "dbt_project/models/intermediate/schema.yml",
+        "dbt_project/models/intermediate/int_raw_data.sql",
+        "dbt_project/models/intermediate/int_plans.sql",
+        "dbt_project/dbt_project.yml",
+        "dags/dbt_csv_dag.py"
+      ],
+      "rules_promoted_to_claude_md": [],
+      "archive_path": "docs/archive/sprint_03_summary.md"
     }
   ]
 }

@@ -43,22 +43,23 @@ DevOps (Phase 0) → Architect → Transformer → Auditor
 - If a worker agent fails 3 times, pause execution and alert the "Human-in-the-Loop" (The User).
 - Use Markdown for all internal documentation.
 
-## 🧹 Sprint Wrap-Up & Reset Protocol (Post-Merge)
-Execute these steps ONLY when the TPM (Human) confirms the Pull Request has been merged:
+## 🧹 Sprint Wrap-Up & Reset Protocol (Pre-Merge)
+Execute these steps when all 4 phases are complete and before the PR is merged. The TPM (Human) will trigger this by requesting a sprint wrap-up.
 
-1. **Rule Promotion:** Scan `SPRINT_REQUIREMENTS.md`. If a rule was marked as "Global" or "Permanent," append it to the 'Project Standards' section of `CLAUDE.md`.
-2. **Requirement Archiving:** Write `docs/archive/sprint_[N]_summary.md` using the archive template below, then clear `SPRINT_REQUIREMENTS.md` back to the blank template.
-3. **Log Purge:** Delete temporary files like `debug.log`, `audit_report.md`, `FIX_LOG.md`, and `.env.bak`.
-4. **Workspace Reset:** Create a blank `SPRINT_REQUIREMENTS.md` with the standard template for the next cycle.
-5. **State Ledger:** Update `/.ai/sprint_ledger.json` — move `active_sprint` to `history`, increment `project_metadata.current_version` (e.g., v1.1.0 → v1.2.0), set `active_sprint: null`, update `last_updated`.
+1. **Sprint Archive:** Write `docs/archive/sprint_[N]_summary.md` using the archive template below. This is the permanent record of the sprint and MUST be committed as part of the PR.
+2. **Rule Promotion:** Scan `SPRINT_REQUIREMENTS.md`. If a rule was marked as "Global" or "Permanent," append it to the 'Project Standards' section of `CLAUDE.md`.
+3. **State Ledger:** Update `/.ai/sprint_ledger.json` — move `active_sprint` to `history`, increment `project_metadata.current_version` (e.g., v1.1.0 → v1.2.0), set `active_sprint: null`, update `last_updated`.
+4. **Workspace Reset:** Clear `SPRINT_REQUIREMENTS.md` back to the blank template for the next cycle.
+5. **Log Purge:** Delete temporary files like `debug.log`, `audit_report.md`, `FIX_LOG.md`, and `.env.bak`.
 
 ### Archive Template
-When archiving `SPRINT_REQUIREMENTS.md`, write a `docs/archive/sprint_[N]_summary.md` with this structure:
+When archiving, write a `docs/archive/sprint_[N]_summary.md` with this structure:
 
 ```markdown
 # Sprint [N] Archive — [Sprint Name]
 **Closed:** [date]
 **Version:** [semver]
+**Branch:** `[branch_name]`
 
 ## Business Rules Applied
 [list each constraint and transformation rule]
@@ -67,8 +68,11 @@ When archiving `SPRINT_REQUIREMENTS.md`, write a `docs/archive/sprint_[N]_summar
 [list any rules that were marked Global/Permanent, or "none"]
 
 ## Artifacts Produced
-[list files created or modified]
+[table of files created, modified, or deleted]
 
 ## Test Results
-[dbt test pass/fail counts]
+[dbt test pass/fail counts, total tests]
+
+## Auditor Findings
+[list any findings detected and fixed during audit, or "No findings"]
 ```
