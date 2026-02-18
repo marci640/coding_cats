@@ -6,12 +6,14 @@
 <!-- - **Filter:** Exclude rows where [column] meets [condition] -->
 
 ### Transformation Logic
-<!-- Describe columns to add, rename, or cast. Example: -->
-<!-- - **Add column:** `CAST(CURRENT_TIMESTAMP AS TIMESTAMP) AS processed_at` -->
+<!-- Add column renames, computed columns, type casts here. Example: -->
+<!-- - **Rename column:** `old_name` → `new_name` in `model_name` -->
+<!-- - **Add column:** `expression AS column_name` in `model_name` -->
 
 ### New Models / Sources
-<!-- List any new seeds, sources, or models to create. Example: -->
-<!-- - **New seed:** `customers.csv` → `stg_customers` -->
+<!-- List new seeds, staging models, or intermediate models. Example: -->
+<!-- - **New seed:** file.csv → stg_model_name -->
+<!-- - **New model:** `model_name` — description (PK: `column`) -->
 
 ### Permanent Rules (will be promoted to CLAUDE.md on sprint close)
 <!-- Mark any rule here as "Global" if it should survive this sprint. Example: -->

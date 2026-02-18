@@ -47,3 +47,33 @@ models:
         data_type: TIMESTAMP
         tests:
           - not_null
+
+  - name: stg_plans
+    description: >
+      Staged plan reference data.
+      Adds a processed_at timestamp.
+      Source: plans seed.
+    columns:
+      - name: plan_type
+        description: "Subscription tier identifier (Primary Key): basic, premium, or enterprise"
+        data_type: VARCHAR
+        tests:
+          - unique
+          - not_null
+          - accepted_values:
+              values: ['basic', 'premium', 'enterprise']
+      - name: amount
+        description: "Plan list price in USD"
+        data_type: "DECIMAL(10,2)"
+        tests:
+          - not_null
+      - name: benefit
+        description: "Plan benefit description"
+        data_type: VARCHAR
+        tests:
+          - not_null
+      - name: processed_at
+        description: "Timestamp when dbt processed this row (CAST(CURRENT_TIMESTAMP AS TIMESTAMP))"
+        data_type: TIMESTAMP
+        tests:
+          - not_null
