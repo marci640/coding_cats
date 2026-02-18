@@ -1,0 +1,71 @@
+{
+  "project_metadata": {
+    "project": "coding_cats",
+    "current_version": "1.1.0",
+    "current_sprint": null,
+    "last_updated": "2026-02-18"
+  },
+  "environment_state": {
+    "python_version": "3.9",
+    "dbt_version": "1.10.5",
+    "installed_drivers": ["dbt-core", "dbt-duckdb"],
+    "database": "duckdb",
+    "env_verified": true,
+    "last_verified": "2026-02-18"
+  },
+  "artifact_registry": {
+    "seeds": [
+      { "name": "raw_data", "path": "dbt_project/seeds/raw_data.csv", "schema": "main" }
+    ],
+    "models": [
+      {
+        "name": "stg_raw_data",
+        "path": "dbt_project/models/staging/stg_raw_data.sql",
+        "materialization": "table",
+        "schema": "main",
+        "tests": 10,
+        "test_status": "passing"
+      }
+    ],
+    "dags": [
+      { "name": "dbt_csv_pipeline", "path": "dags/dbt_csv_dag.py", "schedule": "@daily" }
+    ]
+  },
+  "active_sprint": null,
+  "history": [
+    {
+      "version": "1.0.0",
+      "sprint_id": "coding_cats_sprint_01",
+      "closed_date": "2026-02-14",
+      "branch": "sprint_01",
+      "goals": ["Create staging model from raw_data.csv", "Add processed_at column", "Add Airflow DAG"],
+      "artifacts_promoted": [
+        "dbt_project/models/staging/sources.yml",
+        "dbt_project/models/staging/stg_raw_data.sql",
+        "dbt_project/models/staging/schema.yml",
+        "dags/dbt_csv_dag.py"
+      ],
+      "rules_promoted_to_claude_md": [],
+      "archive_path": "docs/archive/sprint_01_summary.md"
+    },
+    {
+      "version": "1.1.0",
+      "sprint_id": "coding_cats_sprint_02",
+      "closed_date": "2026-02-17",
+      "branch": "sprint_02",
+      "goals": ["Fix seed path and ref() pattern", "Add signup_date filter", "Refactor agent files"],
+      "artifacts_promoted": [
+        "dbt_project/models/staging/schema.yml",
+        "dbt_project/models/staging/stg_raw_data.sql",
+        "dbt_project/dbt_project.yml",
+        "dags/dbt_csv_dag.py"
+      ],
+      "rules_promoted_to_claude_md": [
+        "Profile schema is `main`. Seeds load into `main` schema.",
+        "Seed path is `dbt_project/seeds/`. Use `ref()` not `source()` for seeds.",
+        "Model reference: staging models use ref('raw_data') — no sources.yml needed."
+      ],
+      "archive_path": "docs/archive/sprint_02_summary.md"
+    }
+  ]
+}

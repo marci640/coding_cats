@@ -15,6 +15,7 @@ dbt_project/logs/
 dbt_project/dbt_packages/
 dbt_project/warehouse.duckdb
 dbt_project/warehouse.duckdb.wal
+*.duckdb
 
 # Airflow / Docker
 logs/
