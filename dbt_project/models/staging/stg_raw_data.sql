@@ -1,5 +1,5 @@
 -- Staging model: stg_raw_data
--- Transforms raw customer data and adds processing timestamp.
+-- Transforms raw customer data, filters pre-2025 signups, and adds processing timestamp.
 
 {{ config(materialized='table') }}
 
@@ -11,4 +11,5 @@ SELECT
     plan_type,
     amount,
     CAST(CURRENT_TIMESTAMP AS TIMESTAMP) AS processed_at
-FROM {{ source('raw', 'raw_data') }}
+FROM {{ ref('raw_data') }}
+WHERE signup_date >= '2025-01-01'

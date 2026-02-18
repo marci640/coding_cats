@@ -8,9 +8,9 @@
 - **Testing:** Every model MUST have a `unique` and `not_null` test on the primary key.
 
 ## DuckDB Local Setup Notes
-- **Profile schema:** `main` (default). When a seed uses `+schema: raw`, DuckDB creates schema `main_raw`.
-- **Seed path:** CSV lives in `data/` (project root), so `dbt_project.yml` uses `seed-paths: ["../data"]`.
-- **Source schema:** Must match the actual DuckDB schema (e.g., `main_raw`), not the logical name.
+- **Profile schema:** `main` (default). Seeds load into `main` schema.
+- **Seed path:** CSV lives in `dbt_project/seeds/`. `dbt_project.yml` uses the default `seed-paths: ["seeds"]`.
+- **Model reference:** Staging model uses `ref('raw_data')` to reference the seed (no `sources.yml` needed).
 - **Prerequisites:** `pip install dbt-core dbt-duckdb` 
 
 ## Definition of Done (DoD)
