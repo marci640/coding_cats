@@ -1,0 +1,38 @@
+version: 2
+
+models:
+  - name: stg_raw_data
+    description: "Staged customer data with a processed_at timestamp."
+    columns:
+      - name: id
+        description: "Unique customer identifier (Primary Key)"
+        tests:
+          - unique
+          - not_null
+      - name: name
+        description: "Customer full name"
+        tests:
+          - not_null
+      - name: email
+        description: "Customer email address"
+        tests:
+          - unique
+          - not_null
+      - name: signup_date
+        description: "Date the customer signed up"
+        tests:
+          - not_null
+      - name: plan_type
+        description: "Subscription tier"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['basic', 'premium', 'enterprise']
+      - name: amount
+        description: "Subscription amount in USD"
+        tests:
+          - not_null
+      - name: processed_at
+        description: "Timestamp when dbt processed this row"
+        tests:
+          - not_null

@@ -1,0 +1,22 @@
+# IDE / OS
+.specstory/
+.vscode/
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# dbt
+dbt_project/target/
+dbt_project/logs/
+dbt_project/dbt_packages/
+dbt_project/warehouse.duckdb
+dbt_project/warehouse.duckdb.wal
+
+# Airflow / Docker
+logs/
+*.pid
+*.log

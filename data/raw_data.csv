@@ -1,0 +1,11 @@
+id,name,email,signup_date,plan_type,amount
+1,Alice Johnson,alice@example.com,2025-01-15,premium,99.99
+2,Bob Smith,bob@example.com,2025-02-20,basic,29.99
+3,Carol White,carol@example.com,2025-03-10,premium,99.99
+4,David Brown,david@example.com,2025-04-05,enterprise,249.99
+5,Eve Davis,eve@example.com,2025-05-12,basic,29.99
+6,Frank Miller,frank@example.com,2025-06-18,premium,99.99
+7,Grace Wilson,grace@example.com,2025-07-22,basic,29.99
+8,Hank Moore,hank@example.com,2025-08-30,enterprise,249.99
+9,Ivy Taylor,ivy@example.com,2025-09-14,premium,99.99
+10,Jack Anderson,jack@example.com,2025-10-01,basic,29.99

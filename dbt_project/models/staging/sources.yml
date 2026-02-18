@@ -1,0 +1,28 @@
+version: 2
+
+sources:
+  - name: raw
+    description: "Raw CSV data ingested into the warehouse"
+    schema: main_raw
+    tables:
+      - name: raw_data
+        description: "Customer signup and subscription data from raw_data.csv"
+        columns:
+          - name: id
+            description: "Unique customer identifier (Primary Key)"
+            data_type: INTEGER
+          - name: name
+            description: "Customer full name"
+            data_type: VARCHAR
+          - name: email
+            description: "Customer email address"
+            data_type: VARCHAR
+          - name: signup_date
+            description: "Date the customer signed up (YYYY-MM-DD)"
+            data_type: DATE
+          - name: plan_type
+            description: "Subscription tier: basic, premium, or enterprise"
+            data_type: VARCHAR
+          - name: amount
+            description: "Subscription amount in USD"
+            data_type: "DECIMAL(10,2)"

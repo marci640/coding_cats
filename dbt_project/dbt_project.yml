@@ -1,0 +1,24 @@
+name: coding_cats
+version: '1.0.0'
+config-version: 2
+
+profile: coding_cats
+
+model-paths: ["models"]
+seed-paths: ["../data"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+seeds:
+  coding_cats:
+    +schema: raw
+    raw_data:
+      +column_types:
+        id: INTEGER
+        name: VARCHAR
+        email: VARCHAR
+        signup_date: DATE
+        plan_type: VARCHAR
+        amount: "DECIMAL(10,2)"
