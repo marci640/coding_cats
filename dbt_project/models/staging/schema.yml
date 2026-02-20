@@ -131,3 +131,23 @@ models:
         data_type: TIMESTAMP
         tests:
           - not_null
+
+  - name: stg_diagnosis
+    description: >
+      Staged diagnosis data from SQL Server.
+      Extracts raw diagnosis records from SQL Server dbo.diagnosis table.
+      Adds a processed_at timestamp.
+      Source: sql_server.dbo.diagnosis (MSSQL via DuckDB extension).
+      Note: Column structure is a placeholder and must be verified against actual SQL Server schema.
+    columns:
+      - name: id
+        description: "Unique diagnosis identifier (Primary Key)"
+        data_type: INTEGER
+        tests:
+          - unique
+          - not_null
+      - name: processed_at
+        description: "Timestamp when dbt processed this row (CAST(CURRENT_TIMESTAMP AS TIMESTAMP))"
+        data_type: TIMESTAMP
+        tests:
+          - not_null

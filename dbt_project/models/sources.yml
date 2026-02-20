@@ -1,0 +1,16 @@
+version: 2
+
+sources:
+  - name: sql_server
+    description: "SQL Server database connected via DuckDB mssql extension"
+    database: sql_server
+    schema: dbo
+    tables:
+      - name: diagnosis
+        description: "Diagnosis data from SQL Server"
+        columns:
+          - name: id
+            description: "Primary key for diagnosis records"
+            tests:
+              - unique
+              - not_null

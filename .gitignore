@@ -2,6 +2,7 @@
 .specstory/
 .vscode/
 .DS_Store
+.env
 
 # Python
 __pycache__/
