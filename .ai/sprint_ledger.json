@@ -1,17 +1,17 @@
 {
   "project_metadata": {
     "project": "coding_cats",
-    "current_version": "1.4.0",
+    "current_version": "1.5.0",
     "current_sprint": "none",
     "last_updated": "2026-02-19"
   },
   "environment_state": {
     "python_version": "3.11.6",
-    "dbt_version": "1.10.5",
-    "installed_drivers": ["dbt-core", "dbt-duckdb"],
+    "dbt_version": "1.11.6",
+    "installed_drivers": ["dbt-core==1.11.6", "dbt-duckdb==1.10.1", "duckdb==1.4.2"],
     "database": "duckdb",
     "env_verified": true,
-    "last_verified": "2026-02-18"
+    "last_verified": "2026-02-19"
   },
   "artifact_registry": {
     "seeds": [
@@ -59,6 +59,14 @@
         "schema": "main",
         "tests": 11,
         "test_status": "passing"
+      },
+      {
+        "name": "stg_diagnosis",
+        "path": "dbt_project/models/staging/stg_diagnosis.sql",
+        "materialization": "table",
+        "schema": "main",
+        "tests": 2,
+        "test_status": "run"
       }
     ],
     "dags": [
@@ -145,6 +153,30 @@
       ],
       "rules_promoted_to_claude_md": [],
       "archive_path": "docs/archive/sprint_04_summary.md"
+    },
+    {
+      "version": "1.4.0",
+      "sprint_id": "coding_cats_sprint_05",
+      "closed_date": "2026-02-19",
+      "branch": "sprint_05",
+      "goals": [
+        "Connect to SQL Server instance using DuckDB mssql extension",
+        "Create sources.yml with sql_server source for dbo.diagnosis table",
+        "Create stg_diagnosis staging model"
+      ],
+      "artifacts_promoted": [
+        "dbt_project/models/sources.yml",
+        "dbt_project/models/staging/stg_diagnosis.sql",
+        "dbt_project/models/staging/schema.yml",
+        "dbt_project/profiles.yml",
+        "dbt_project/dbt_project.yml",
+        "requirements.txt",
+        "venv/bin/pip"
+      ],
+      "rules_promoted_to_claude_md": [
+        "When connecting to external databases via DuckDB extensions, always use (TYPE [extension_name]) in the ATTACH command for network connections"
+      ],
+      "archive_path": "docs/archive/sprint_05_summary.md"
     }
   ]
 }

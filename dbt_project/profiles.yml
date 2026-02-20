@@ -6,3 +6,5 @@ coding_cats:
       path: "warehouse.duckdb"
       schema: main
       threads: 4
+      settings:
+        custom_extension_repository: "https://community-extensions.duckdb.org"

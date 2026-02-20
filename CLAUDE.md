@@ -11,7 +11,8 @@
 - **Profile schema:** `main` (default). Seeds load into `main` schema.
 - **Seed path:** CSV lives in `dbt_project/seeds/`. `dbt_project.yml` uses the default `seed-paths: ["seeds"]`.
 - **Model reference:** Staging model uses `ref('raw_data')` to reference the seed (no `sources.yml` needed).
-- **Prerequisites:** `pip install dbt-core dbt-duckdb` 
+- **Prerequisites:** `pip install dbt-core dbt-duckdb`
+- **External Database Connections:** When connecting to external databases via DuckDB extensions, always use `(TYPE [extension_name])` in the ATTACH command for network connections. 
 
 ## Definition of Done (DoD)
 1. CSV is loaded into a staging table.
