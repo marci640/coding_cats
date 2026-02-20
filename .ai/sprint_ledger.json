@@ -1,9 +1,9 @@
 {
   "project_metadata": {
     "project": "coding_cats",
-    "current_version": "1.3.0",
+    "current_version": "1.4.0",
     "current_sprint": "none",
-    "last_updated": "2026-02-18"
+    "last_updated": "2026-02-19"
   },
   "environment_state": {
     "python_version": "3.11.6",
@@ -65,23 +65,7 @@
       { "name": "dbt_csv_pipeline", "path": "dags/dbt_csv_dag.py", "schedule": "@daily" }
     ]
   },
-  "active_sprint": {
-    "sprint_id": "coding_cats_sprint_04",
-    "branch": "sprint_04",
-    "started": "2026-02-18",
-    "goals": [
-      "Add benefit_features.csv seed and stg_benefit_features model",
-      "Create int_plan_features joining stg_plans to stg_benefit_features",
-      "Add customer_tier to int_plans and filter out discount_amount = 0 or NULL"
-    ],
-    "technical_dependencies": [],
-    "phases": {
-      "01_architect": "complete",
-      "02_transformer": "complete",
-      "03_auditor": "complete",
-      "04_devops": "complete"
-    }
-  },
+  "active_sprint": null,
   "history": [
     {
       "version": "1.0.0",
@@ -139,6 +123,28 @@
       ],
       "rules_promoted_to_claude_md": [],
       "archive_path": "docs/archive/sprint_03_summary.md"
+    },
+    {
+      "version": "1.3.0",
+      "sprint_id": "coding_cats_sprint_04",
+      "closed_date": "2026-02-19",
+      "branch": "sprint_04",
+      "goals": [
+        "Add benefit_features.csv seed and stg_benefit_features model",
+        "Create int_plan_features joining stg_plans to stg_benefit_features",
+        "Add customer_tier to int_plans and filter out discount_amount = 0 or NULL"
+      ],
+      "artifacts_promoted": [
+        "dbt_project/seeds/benefit_features.csv",
+        "dbt_project/models/staging/schema.yml",
+        "dbt_project/models/staging/stg_benefit_features.sql",
+        "dbt_project/models/intermediate/int_plan_features.sql",
+        "dbt_project/models/intermediate/int_plans.sql",
+        "dbt_project/dbt_project.yml",
+        "dags/dbt_csv_dag.py"
+      ],
+      "rules_promoted_to_claude_md": [],
+      "archive_path": "docs/archive/sprint_04_summary.md"
     }
   ]
 }
