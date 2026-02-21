@@ -1,9 +1,9 @@
 {
   "project_metadata": {
     "project": "coding_cats",
-    "current_version": "1.5.0",
-    "current_sprint": "none",
-    "last_updated": "2026-02-19"
+    "current_version": "1.6.0",
+    "current_sprint": null,
+    "last_updated": "2026-02-20"
   },
   "environment_state": {
     "python_version": "3.11.6",
@@ -11,7 +11,7 @@
     "installed_drivers": ["dbt-core==1.11.6", "dbt-duckdb==1.10.1", "duckdb==1.4.2"],
     "database": "duckdb",
     "env_verified": true,
-    "last_verified": "2026-02-19"
+    "last_verified": "2026-02-20"
   },
   "artifact_registry": {
     "seeds": [
@@ -177,6 +177,44 @@
         "When connecting to external databases via DuckDB extensions, always use (TYPE [extension_name]) in the ATTACH command for network connections"
       ],
       "archive_path": "docs/archive/sprint_05_summary.md"
+    },
+    {
+      "version": "1.5.0",
+      "sprint_id": "coding_cats_sprint_06",
+      "closed_date": "2026-02-20",
+      "branch": "sprint_06",
+      "goals": [
+        "Rename stg_raw_data to stg_users for better data semantics",
+        "Add 5 new SQL Server staging models: contact_info, phone_log, usage_hours, referral_codes, enterprise_accounts", 
+        "Create int_user_stats with comprehensive user analytics aggregation",
+        "Create user_summary final model with enterprise flags",
+        "Update all downstream model references from stg_raw_data to stg_users",
+        "Remove stg_diagnosis model and update DAG pipeline"
+      ],
+      "artifacts_promoted": [
+        "dbt_project/models/sources.yml",
+        "dbt_project/models/staging/stg_users.sql",
+        "dbt_project/models/staging/stg_contact_info.sql",
+        "dbt_project/models/staging/stg_phone_log.sql",
+        "dbt_project/models/staging/stg_usage_hours.sql",
+        "dbt_project/models/staging/stg_referral_codes.sql", 
+        "dbt_project/models/staging/stg_enterprise_accounts.sql",
+        "dbt_project/models/staging/schema.yml",
+        "dbt_project/models/intermediate/int_user_stats.sql",
+        "dbt_project/models/intermediate/int_raw_data.sql",
+        "dbt_project/models/intermediate/int_plans.sql",
+        "dbt_project/models/intermediate/user_summary.sql",
+        "dbt_project/models/intermediate/schema.yml",
+        "dags/dbt_csv_dag.py"
+      ],
+      "rules_promoted_to_claude_md": [],
+      "validation_results": {
+        "dbt_compile": "PASS - 0 errors",
+        "dbt_test": "PASS - 115/115 model tests, 14 source tests skipped (SQL Server unavailable)",
+        "dag_syntax": "PASS - validated successfully", 
+        "cross_reference_check": "PASS - 0 discrepancies between requirements/schema/implementation"
+      },
+      "archive_path": "docs/archive/sprint_06_summary.md"
     }
   ]
 }

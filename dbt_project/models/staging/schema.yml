@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: stg_raw_data
+  - name: stg_users
     description: >
       Staged customer signup and subscription data.
       Adds a processed_at timestamp.
@@ -132,19 +132,182 @@ models:
         tests:
           - not_null
 
-  - name: stg_diagnosis
+  - name: stg_contact_info
     description: >
-      Staged diagnosis data from SQL Server.
-      Extracts raw diagnosis records from SQL Server dbo.diagnosis table.
+      Staged customer contact information.
       Adds a processed_at timestamp.
-      Source: sql_server.dbo.diagnosis (MSSQL via DuckDB extension).
-      Note: Column structure is a placeholder and must be verified against actual SQL Server schema.
+      Source: sql_server.dbo.contact_info table.
     columns:
       - name: id
-        description: "Unique diagnosis identifier (Primary Key)"
+        description: "Unique contact record identifier (Primary Key)"
         data_type: INTEGER
         tests:
           - unique
+          - not_null
+      - name: phone
+        description: "Customer phone number"
+        data_type: VARCHAR
+        tests:
+          - not_null
+      - name: street
+        description: "Street address"
+        data_type: VARCHAR
+        tests:
+          - not_null
+      - name: city
+        description: "City name"
+        data_type: VARCHAR
+        tests:
+          - not_null
+      - name: state
+        description: "State abbreviation"
+        data_type: VARCHAR
+        tests:
+          - not_null
+      - name: postal_code
+        description: "ZIP/postal code"
+        data_type: VARCHAR
+        tests:
+          - not_null
+      - name: processed_at
+        description: "Timestamp when dbt processed this row (CAST(CURRENT_TIMESTAMP AS TIMESTAMP))"
+        data_type: TIMESTAMP
+        tests:
+          - not_null
+
+  - name: stg_phone_log
+    description: >
+      Staged customer phone call records.
+      Adds a processed_at timestamp.
+      Source: sql_server.dbo.phone_log table.
+    columns:
+      - name: id
+        description: "User ID who made/received the call"
+        data_type: INTEGER
+        tests:
+          - not_null
+      - name: call_timestamp
+        description: "When the call occurred"
+        data_type: TIMESTAMP
+        tests:
+          - not_null
+      - name: direction
+        description: "Call direction: inbound or outbound"
+        data_type: VARCHAR
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['inbound', 'outbound']
+      - name: reason
+        description: "Reason for the support call"
+        data_type: VARCHAR
+        tests:
+          - not_null
+      - name: agent_id
+        description: "Support agent identifier"
+        data_type: INTEGER
+        tests:
+          - not_null
+      - name: duration_seconds
+        description: "Call duration in seconds"
+        data_type: INTEGER
+        tests:
+          - not_null
+      - name: processed_at
+        description: "Timestamp when dbt processed this row (CAST(CURRENT_TIMESTAMP AS TIMESTAMP))"
+        data_type: TIMESTAMP
+        tests:
+          - not_null
+
+  - name: stg_usage_hours
+    description: >
+      Staged customer usage hours by month/year.
+      Adds a processed_at timestamp.
+      Source: sql_server.dbo.usage_hours table.
+    columns:
+      - name: id
+        description: "User ID (references stg_users.id)"
+        data_type: INTEGER
+        tests:
+          - not_null
+      - name: month
+        description: "Month number (1-12)"
+        data_type: INTEGER
+        tests:
+          - not_null
+      - name: year
+        description: "Year (YYYY)"
+        data_type: INTEGER
+        tests:
+          - not_null
+      - name: hours_used
+        description: "Hours used during this month"
+        data_type: "DECIMAL(10,2)"
+        tests:
+          - not_null
+      - name: processed_at
+        description: "Timestamp when dbt processed this row (CAST(CURRENT_TIMESTAMP AS TIMESTAMP))"
+        data_type: TIMESTAMP
+        tests:
+          - not_null
+
+  - name: stg_referral_codes
+    description: >
+      Staged customer referral codes and status.
+      Adds a processed_at timestamp.
+      Data Quality Fix: Cast id from float (1.0, 2.0) to integer (1, 2).
+      Source: sql_server.dbo.referral_codes table.
+    columns:
+      - name: id
+        description: "Unique referral record identifier (Primary Key)"
+        data_type: INTEGER
+        tests:
+          - unique
+          - not_null
+      - name: referral_code
+        description: "Referral code string"
+        data_type: VARCHAR
+        tests:
+          - not_null
+      - name: status
+        description: "Referral status: active, inactive, expired"
+        data_type: VARCHAR
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['active', 'inactive', 'expired']
+      - name: processed_at
+        description: "Timestamp when dbt processed this row (CAST(CURRENT_TIMESTAMP AS TIMESTAMP))"
+        data_type: TIMESTAMP
+        tests:
+          - not_null
+
+  - name: stg_enterprise_accounts
+    description: >
+      Staged enterprise account information.
+      Adds a processed_at timestamp.
+      Source: sql_server.dbo.enterprise_accounts table.
+    columns:
+      - name: id
+        description: "User ID for enterprise customer (Primary Key, references stg_users.id)"
+        data_type: INTEGER
+        tests:
+          - unique
+          - not_null
+      - name: business_name
+        description: "Enterprise business name"
+        data_type: VARCHAR
+        tests:
+          - not_null
+      - name: contract_value_usd
+        description: "Total contract value in USD"
+        data_type: "DECIMAL(10,2)"
+        tests:
+          - not_null
+      - name: renewal_date
+        description: "Contract renewal date"
+        data_type: DATE
+        tests:
           - not_null
       - name: processed_at
         description: "Timestamp when dbt processed this row (CAST(CURRENT_TIMESTAMP AS TIMESTAMP))"

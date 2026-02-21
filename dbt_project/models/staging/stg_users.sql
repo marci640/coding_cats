@@ -1,4 +1,4 @@
--- Staging model: stg_raw_data
+-- Staging model: stg_users
 -- Transforms raw customer data, filters pre-2025 signups, and adds processing timestamp.
 
 {{ config(materialized='table') }}

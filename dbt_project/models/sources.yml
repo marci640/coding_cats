@@ -6,11 +6,91 @@ sources:
     database: sql_server
     schema: dbo
     tables:
-      - name: diagnosis
-        description: "Diagnosis data from SQL Server"
+      - name: contact_info
+        description: "Customer contact information including phone and address"
         columns:
           - name: id
-            description: "Primary key for diagnosis records"
+            description: "Unique contact record identifier (Primary Key)"
             tests:
               - unique
               - not_null
+          - name: phone
+            description: "Customer phone number"
+          - name: street
+            description: "Street address"
+          - name: city
+            description: "City name"
+          - name: state
+            description: "State abbreviation"  
+          - name: postal_code
+            description: "ZIP/postal code"
+
+      - name: phone_log
+        description: "Customer support phone call records"
+        columns:
+          - name: id
+            description: "User ID who made/received the call"
+            tests:
+              - not_null
+          - name: call_timestamp
+            description: "When the call occurred"
+            tests:
+              - not_null
+          - name: direction
+            description: "Call direction: inbound or outbound"
+            tests:
+              - not_null
+          - name: reason
+            description: "Reason for the support call"
+          - name: agent_id
+            description: "Support agent identifier"
+          - name: duration_seconds
+            description: "Call duration in seconds"
+
+      - name: usage_hours
+        description: "Customer usage hours tracked by month and year"
+        columns:
+          - name: id
+            description: "User ID (references users table)"
+            tests:
+              - not_null
+          - name: month
+            description: "Month number (1-12)"
+            tests:
+              - not_null
+          - name: year
+            description: "Year (YYYY)"
+            tests:
+              - not_null
+          - name: hours_used
+            description: "Hours used during this month"
+            tests:
+              - not_null
+
+      - name: referral_codes
+        description: "Customer referral codes and status tracking"
+        columns:
+          - name: id
+            description: "Unique referral record identifier (Primary Key) - NOTE: Source has float type, will be cast to INTEGER"
+            tests:
+              - unique
+              - not_null
+          - name: referral_code
+            description: "Referral code string"
+          - name: status
+            description: "Referral status: active, inactive, expired"
+
+      - name: enterprise_accounts  
+        description: "Enterprise customer contract information"
+        columns:
+          - name: id
+            description: "User ID for enterprise customer (Primary Key)"
+            tests:
+              - unique
+              - not_null
+          - name: business_name
+            description: "Enterprise business name"
+          - name: contract_value_usd
+            description: "Total contract value in USD"
+          - name: renewal_date
+            description: "Contract renewal date"

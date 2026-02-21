@@ -6,7 +6,7 @@ models:
       Intermediate customer data.
       Renames signup_date to registered_at.
       Adds a literal status column ('ACTIVE' for all rows).
-      Source: stg_raw_data.
+      Source: stg_users.
     columns:
       - name: id
         description: "Unique customer identifier (Primary Key)"
@@ -50,7 +50,7 @@ models:
           - accepted_values:
               values: ['ACTIVE']
       - name: processed_at
-        description: "Timestamp when dbt processed this row (inherited from stg_raw_data)"
+        description: "Timestamp when dbt processed this row (inherited from stg_users)"
         data_type: TIMESTAMP
         tests:
           - not_null
@@ -58,14 +58,14 @@ models:
   - name: int_plans
     description: >
       Intermediate plan-enriched customer data.
-      Joins stg_raw_data to stg_plans on plan_type.
-      Adds discount_amount as stg_raw_data.amount * 0.20.
+      Joins stg_users to stg_plans on plan_type.
+      Adds discount_amount as stg_users.amount * 0.20.
       Adds customer_tier: 'high_value' when amount >= 100, else 'standard'.
       Filter: Excludes rows where discount_amount is 0 or NULL.
-      Source: stg_raw_data JOIN stg_plans ON plan_type.
+      Source: stg_users JOIN stg_plans ON plan_type.
     columns:
       - name: id
-        description: "Unique customer identifier (Primary Key, from stg_raw_data)"
+        description: "Unique customer identifier (Primary Key, from stg_users)"
         data_type: INTEGER
         tests:
           - unique
@@ -88,7 +88,7 @@ models:
           - accepted_values:
               values: ['basic', 'premium', 'enterprise']
       - name: amount
-        description: "Customer subscription amount in USD (from stg_raw_data)"
+        description: "Customer subscription amount in USD (from stg_users)"
         data_type: "DECIMAL(10,2)"
         tests:
           - not_null
@@ -98,7 +98,7 @@ models:
         tests:
           - not_null
       - name: discount_amount
-        description: "20% discount on customer amount (stg_raw_data.amount * 0.20)"
+        description: "20% discount on customer amount (stg_users.amount * 0.20)"
         data_type: "DECIMAL(10,2)"
         tests:
           - not_null
@@ -110,7 +110,7 @@ models:
           - accepted_values:
               values: ['high_value', 'standard']
       - name: processed_at
-        description: "Timestamp when dbt processed this row (inherited from stg_raw_data)"
+        description: "Timestamp when dbt processed this row (inherited from stg_users)"
         data_type: TIMESTAMP
         tests:
           - not_null
@@ -177,6 +177,107 @@ models:
           - not_null
       - name: processed_at
         description: "Timestamp when dbt processed this row (inherited from stg_plans)"
+        data_type: TIMESTAMP
+        tests:
+          - not_null
+
+  - name: int_user_stats
+    description: >
+      Intermediate user statistics aggregation.
+      Combines user data with usage hours, phone calls, and enterprise status.
+      Joins stg_users (base) with aggregated usage_hours, phone_log, and enterprise_accounts.
+      Source: stg_users LEFT JOIN usage_hours, phone_log, enterprise_accounts.
+    columns:
+      - name: id
+        description: "Unique user identifier (Primary Key, from stg_users)"
+        data_type: INTEGER
+        tests:
+          - unique
+          - not_null
+      - name: name
+        description: "Customer full name"
+        data_type: VARCHAR
+        tests:
+          - not_null
+      - name: email
+        description: "Customer email address"
+        data_type: VARCHAR
+        tests:
+          - not_null
+      - name: plan_type
+        description: "Subscription tier: basic, premium, or enterprise"
+        data_type: VARCHAR
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['basic', 'premium', 'enterprise']
+      - name: total_usage_hours
+        description: "Sum of all usage hours for this user (NULL if no usage data)"
+        data_type: "DECIMAL(10,2)"
+      - name: total_phone_calls
+        description: "Count of all phone calls for this user (0 if no calls)"
+        data_type: INTEGER
+        tests:
+          - not_null
+      - name: is_high_value_enterprise
+        description: "TRUE if enterprise customer with contract_value_usd > 60000, else FALSE"
+        data_type: BOOLEAN
+        tests:
+          - not_null
+      - name: processed_at
+        description: "Timestamp when dbt processed this row"
+        data_type: TIMESTAMP
+        tests:
+          - not_null
+
+  - name: user_summary
+    description: >
+      Final user summary model with comprehensive user analytics.
+      Source: int_user_stats with additional computed columns.
+    columns:
+      - name: id
+        description: "Unique user identifier (Primary Key)"
+        data_type: INTEGER
+        tests:
+          - unique
+          - not_null
+      - name: name
+        description: "Customer full name"
+        data_type: VARCHAR
+        tests:
+          - not_null
+      - name: email
+        description: "Customer email address"
+        data_type: VARCHAR
+        tests:
+          - not_null
+      - name: plan_type
+        description: "Subscription tier: basic, premium, or enterprise"
+        data_type: VARCHAR
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['basic', 'premium', 'enterprise']
+      - name: total_usage_hours
+        description: "Sum of all usage hours for this user"
+        data_type: "DECIMAL(10,2)"
+      - name: total_phone_calls
+        description: "Count of all phone calls for this user"
+        data_type: INTEGER
+        tests:
+          - not_null
+      - name: is_high_value_enterprise
+        description: "TRUE if enterprise customer with contract_value_usd > 60000"
+        data_type: BOOLEAN
+        tests:
+          - not_null
+      - name: is_enterprise
+        description: "TRUE if plan_type = 'enterprise', else FALSE"
+        data_type: BOOLEAN
+        tests:
+          - not_null
+      - name: processed_at
+        description: "Timestamp when dbt processed this row"
         data_type: TIMESTAMP
         tests:
           - not_null

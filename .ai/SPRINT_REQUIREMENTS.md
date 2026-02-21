@@ -1,12 +1,17 @@
 ## Sprint Requirements
-<!-- Sprint version: [NEXT_VERSION] | Started: [NEXT_DATE] -->
+<!-- Sprint version: [VERSION] | Started: [DATE] -->
 
 ### Business Rules
+[Define the business logic and constraints for this sprint]
 
 ### Transformation Logic
+[Specify the data transformation requirements]
 
 ### New Models / Sources
+[List new models, sources, or changes to existing models]
+
+### Technical Dependencies
+[List any technical requirements, packages, or infrastructure needed]
 
 ### Permanent Rules (will be promoted to CLAUDE.md on sprint close)
-<!-- Mark any rule here as "Global" if it should survive this sprint. Example: -->
-<!-- - **Global:** All timestamp columns must use `CAST(CURRENT_TIMESTAMP AS TIMESTAMP)` -->
+[List any rules that should become global project standards]
