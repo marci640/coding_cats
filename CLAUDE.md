@@ -37,3 +37,6 @@
    *SQL column names MUST match schema.yml exactly.*
 3. **AUDITOR:** Executes `dbt compile` -> Compares SQL output against `schema.yml`.
    *Any mismatch triggers an automatic REJECT and REWORK loop.*
+
+## Project Standards (Evolved)
+Permanent rules promoted from completed sprints:

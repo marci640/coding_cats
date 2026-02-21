@@ -12,4 +12,4 @@ SELECT
     amount,
     'ACTIVE' AS status,
     processed_at
-FROM {{ ref('stg_raw_data') }}
+FROM {{ ref('stg_users') }}
