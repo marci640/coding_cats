@@ -2,8 +2,7 @@
   "project_metadata": {
     "project": "coding_cats",
     "current_version": "1.6.0",
-    "current_sprint": null,
-    "last_updated": "2026-02-20"
+    "last_updated": "2026-02-21"
   },
   "environment_state": {
     "python_version": "3.11.6",
@@ -13,208 +12,80 @@
     "env_verified": true,
     "last_verified": "2026-02-20"
   },
-  "artifact_registry": {
-    "seeds": [
-      { "name": "raw_data", "path": "dbt_project/seeds/raw_data.csv", "schema": "main" },
-      { "name": "plans", "path": "dbt_project/seeds/plans.csv", "schema": "main" },
-      { "name": "benefit_features", "path": "dbt_project/seeds/benefit_features.csv", "schema": "main" }
-    ],
-    "models": [
-      {
-        "name": "stg_raw_data",
-        "path": "dbt_project/models/staging/stg_raw_data.sql",
-        "materialization": "table",
-        "schema": "main",
-        "tests": 10,
-        "test_status": "passing"
-      },
-      {
-        "name": "stg_plans",
-        "path": "dbt_project/models/staging/stg_plans.sql",
-        "materialization": "table",
-        "schema": "main",
-        "tests": 6,
-        "test_status": "passing"
-      },
-      {
-        "name": "stg_benefit_features",
-        "path": "dbt_project/models/staging/stg_benefit_features.sql",
-        "materialization": "table",
-        "schema": "main",
-        "tests": 8,
-        "test_status": "passing"
-      },
-      {
-        "name": "int_raw_data",
-        "path": "dbt_project/models/intermediate/int_raw_data.sql",
-        "materialization": "table",
-        "schema": "main",
-        "tests": 12,
-        "test_status": "passing"
-      },
-      {
-        "name": "int_plans",
-        "path": "dbt_project/models/intermediate/int_plans.sql",
-        "materialization": "table",
-        "schema": "main",
-        "tests": 11,
-        "test_status": "passing"
-      },
-      {
-        "name": "stg_diagnosis",
-        "path": "dbt_project/models/staging/stg_diagnosis.sql",
-        "materialization": "table",
-        "schema": "main",
-        "tests": 2,
-        "test_status": "run"
-      }
-    ],
-    "dags": [
-      { "name": "dbt_csv_pipeline", "path": "dags/dbt_csv_dag.py", "schedule": "@daily" }
-    ]
-  },
   "active_sprint": null,
   "history": [
     {
-      "version": "1.0.0",
       "sprint_id": "coding_cats_sprint_01",
       "closed_date": "2026-02-14",
-      "branch": "sprint_01",
-      "goals": ["Create staging model from raw_data.csv", "Add processed_at column", "Add Airflow DAG"],
-      "artifacts_promoted": [
-        "dbt_project/models/staging/sources.yml",
+      "artifacts": [
         "dbt_project/models/staging/stg_raw_data.sql",
         "dbt_project/models/staging/schema.yml",
         "dags/dbt_csv_dag.py"
       ],
-      "rules_promoted_to_claude_md": [],
-      "archive_path": "docs/archive/sprint_01_summary.md"
+      "requirements_path": "docs/archive/sprint_01/sprint_01_requirements.md",
+      "summary_path": "docs/archive/sprint_01/sprint_01_summary.md"
     },
     {
-      "version": "1.1.0",
       "sprint_id": "coding_cats_sprint_02",
       "closed_date": "2026-02-17",
-      "branch": "sprint_02",
-      "goals": ["Fix seed path and ref() pattern", "Add signup_date filter", "Refactor agent files"],
-      "artifacts_promoted": [
-        "dbt_project/models/staging/schema.yml",
+      "artifacts": [
         "dbt_project/models/staging/stg_raw_data.sql",
-        "dbt_project/dbt_project.yml",
+        "dbt_project/models/staging/schema.yml",
         "dags/dbt_csv_dag.py"
       ],
-      "rules_promoted_to_claude_md": [
-        "Profile schema is `main`. Seeds load into `main` schema.",
-        "Seed path is `dbt_project/seeds/`. Use `ref()` not `source()` for seeds.",
-        "Model reference: staging models use ref('raw_data') — no sources.yml needed."
-      ],
-      "archive_path": "docs/archive/sprint_02_summary.md"
+      "requirements_path": "docs/archive/sprint_02/sprint_02_requirements.md",
+      "summary_path": "docs/archive/sprint_02/sprint_02_summary.md"
     },
     {
-      "version": "1.2.0",
       "sprint_id": "coding_cats_sprint_03",
       "closed_date": "2026-02-18",
-      "branch": "sprint_03",
-      "goals": [
-        "Add plans.csv seed and stg_plans model",
-        "Create int_raw_data with status column and signup_date rename",
-        "Create int_plans with discount_amount via stg_raw_data JOIN stg_plans"
-      ],
-      "artifacts_promoted": [
-        "dbt_project/seeds/plans.csv",
-        "dbt_project/models/staging/schema.yml",
+      "artifacts": [
         "dbt_project/models/staging/stg_plans.sql",
-        "dbt_project/models/intermediate/schema.yml",
         "dbt_project/models/intermediate/int_raw_data.sql",
         "dbt_project/models/intermediate/int_plans.sql",
-        "dbt_project/dbt_project.yml",
         "dags/dbt_csv_dag.py"
       ],
-      "rules_promoted_to_claude_md": [],
-      "archive_path": "docs/archive/sprint_03_summary.md"
+      "requirements_path": "docs/archive/sprint_03/sprint_03_requirements.md",
+      "summary_path": "docs/archive/sprint_03/sprint_03_summary.md"
     },
     {
-      "version": "1.3.0",
       "sprint_id": "coding_cats_sprint_04",
       "closed_date": "2026-02-19",
-      "branch": "sprint_04",
-      "goals": [
-        "Add benefit_features.csv seed and stg_benefit_features model",
-        "Create int_plan_features joining stg_plans to stg_benefit_features",
-        "Add customer_tier to int_plans and filter out discount_amount = 0 or NULL"
-      ],
-      "artifacts_promoted": [
-        "dbt_project/seeds/benefit_features.csv",
-        "dbt_project/models/staging/schema.yml",
+      "artifacts": [
         "dbt_project/models/staging/stg_benefit_features.sql",
         "dbt_project/models/intermediate/int_plan_features.sql",
-        "dbt_project/models/intermediate/int_plans.sql",
-        "dbt_project/dbt_project.yml",
-        "dags/dbt_csv_dag.py"
+        "dbt_project/models/intermediate/int_plans.sql"
       ],
-      "rules_promoted_to_claude_md": [],
-      "archive_path": "docs/archive/sprint_04_summary.md"
+      "requirements_path": "docs/archive/sprint_04/sprint_04_requirements.md",
+      "summary_path": "docs/archive/sprint_04/sprint_04_summary.md"
     },
     {
-      "version": "1.4.0",
       "sprint_id": "coding_cats_sprint_05",
       "closed_date": "2026-02-19",
-      "branch": "sprint_05",
-      "goals": [
-        "Connect to SQL Server instance using DuckDB mssql extension",
-        "Create sources.yml with sql_server source for dbo.diagnosis table",
-        "Create stg_diagnosis staging model"
-      ],
-      "artifacts_promoted": [
+      "artifacts": [
         "dbt_project/models/sources.yml",
         "dbt_project/models/staging/stg_diagnosis.sql",
-        "dbt_project/models/staging/schema.yml",
-        "dbt_project/profiles.yml",
-        "dbt_project/dbt_project.yml",
-        "requirements.txt",
-        "venv/bin/pip"
+        "dbt_project/profiles.yml"
       ],
-      "rules_promoted_to_claude_md": [
-        "When connecting to external databases via DuckDB extensions, always use (TYPE [extension_name]) in the ATTACH command for network connections"
-      ],
-      "archive_path": "docs/archive/sprint_05_summary.md"
+      "requirements_path": "docs/archive/sprint_05/sprint_05_requirements.md",
+      "summary_path": "docs/archive/sprint_05/sprint_05_summary.md"
     },
     {
-      "version": "1.5.0",
       "sprint_id": "coding_cats_sprint_06",
       "closed_date": "2026-02-20",
-      "branch": "sprint_06",
-      "goals": [
-        "Rename stg_raw_data to stg_users for better data semantics",
-        "Add 5 new SQL Server staging models: contact_info, phone_log, usage_hours, referral_codes, enterprise_accounts", 
-        "Create int_user_stats with comprehensive user analytics aggregation",
-        "Create user_summary final model with enterprise flags",
-        "Update all downstream model references from stg_raw_data to stg_users",
-        "Remove stg_diagnosis model and update DAG pipeline"
-      ],
-      "artifacts_promoted": [
-        "dbt_project/models/sources.yml",
+      "artifacts": [
         "dbt_project/models/staging/stg_users.sql",
         "dbt_project/models/staging/stg_contact_info.sql",
         "dbt_project/models/staging/stg_phone_log.sql",
         "dbt_project/models/staging/stg_usage_hours.sql",
-        "dbt_project/models/staging/stg_referral_codes.sql", 
+        "dbt_project/models/staging/stg_referral_codes.sql",
         "dbt_project/models/staging/stg_enterprise_accounts.sql",
-        "dbt_project/models/staging/schema.yml",
         "dbt_project/models/intermediate/int_user_stats.sql",
-        "dbt_project/models/intermediate/int_raw_data.sql",
-        "dbt_project/models/intermediate/int_plans.sql",
         "dbt_project/models/intermediate/user_summary.sql",
-        "dbt_project/models/intermediate/schema.yml",
         "dags/dbt_csv_dag.py"
       ],
-      "rules_promoted_to_claude_md": [],
-      "validation_results": {
-        "dbt_compile": "PASS - 0 errors",
-        "dbt_test": "PASS - 115/115 model tests, 14 source tests skipped (SQL Server unavailable)",
-        "dag_syntax": "PASS - validated successfully", 
-        "cross_reference_check": "PASS - 0 discrepancies between requirements/schema/implementation"
-      },
-      "archive_path": "docs/archive/sprint_06_summary.md"
+      "requirements_path": "docs/archive/sprint_06/sprint_06_requirements.md",
+      "summary_path": "docs/archive/sprint_06/sprint_06_summary.md"
     }
   ]
 }
