@@ -17,8 +17,8 @@
     "status": "IN_PROGRESS",
     "started": "2026-02-24",
     "goal": "Add price_group classification column to plans model",
-    "current_phase": "phase_0",
-    "artifacts": []
+    "current_phase": "phase_1.5_assumption_gate",
+    "artifacts": ["dbt_project/models/intermediate/schema.yml", ".ai/ACTIVE_ASSUMPTIONS.md"]
   },
   "history": [
     {
