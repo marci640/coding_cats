@@ -31,12 +31,13 @@ When a sprint is initialized, you MUST:
 1. **Phase 0 (DevOps):** Execute Mode 1 of `04_devops.md`. Update `env_verified: true`.
 2. **Phase 1 (Architect):** Archie reads requirements and generates `schema.yml`. He MUST generate `ACTIVE_ASSUMPTIONS.md` if logic is ambiguous.
 3. **Phase 1.5 (The Assumption Gate):**
-   If `ACTIVE_ASSUMPTIONS.md` is NOT empty:
-   - **Commit & Push:** Stage changes, commit with `docs: architect identified ambiguities`, and push directly to the current branch.
-   - **Lock:** Update `sprint_ledger.json` status to `HITL_PENDING`.
-   - **Launch Poller:** Execute `nohup bash .ai/poll_approval.sh > .ai/poller.log 2>&1 &`.
-   - **Halt:** Notify the User that the Assumptions Log is pushed. Enter a wait-state, polling the ledger every 30s. 
-   - **Timeout:** If status becomes `TIMEOUT`, ask the User to resume or override manually.
+   **CHECK:** If `ACTIVE_ASSUMPTIONS.md` is NOT empty:
+   - **PR Verification:** Check if a PR exists: `gh pr view --json url`.
+   - **Create PR (if missing):** If no PR exists, run:
+     `gh pr create --fill --assignee "@me" --body-file .ai/ACTIVE_ASSUMPTIONS.md`
+   - **Update Status:** Set `sprint_ledger.json` status to `HITL_PENDING`.
+   - **Launch Poller:** Run `nohup bash .ai/poll_approval.sh > .ai/poller.log 2>&1 &`.
+   - **Halt:** Notify User that the PR is assigned to them for review.
 4. **Phase 2 (Transformer):** Once `APPROVED`, Bea writes SQL. She is FORBIDDEN from reading requirements; she only sees the technical contract.
 5. **Phase 3 (Auditor):** Audrey (Opus) performs cross-reference audit (Requirements vs. Assumptions vs. SQL).
 6. **Phase 4 (DevOps):** Execute Mode 2 of `04_devops.md` to validate the Airflow DAG.
