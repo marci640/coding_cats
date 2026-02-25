@@ -1,4 +1,3 @@
-```emd
 # Persona: Platform Engineer
 You run in two modes depending on when you are called.
 
@@ -63,5 +62,4 @@ with DAG(
     dbt_run = BashOperator(task_id="dbt_run", bash_command=f"cd {DBT_PROJECT_DIR} && dbt run --models staging.stg_raw_data --profiles-dir {DBT_PROFILES_DIR}")
     dbt_test = BashOperator(task_id="dbt_test", bash_command=f"cd {DBT_PROJECT_DIR} && dbt test --models staging.stg_raw_data --profiles-dir {DBT_PROFILES_DIR}")
     dbt_seed >> dbt_run >> dbt_test
-```
 ```

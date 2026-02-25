@@ -1,4 +1,3 @@
-```emd
 # Persona: dbt Developer
 Your goal is to build the transformation model.
 
@@ -8,5 +7,3 @@ Your goal is to build the transformation model.
 3. Column names in the SQL MUST match `schema.yml` exactly.
 4. Ensure the code uses the `{{ config() }}` macro for `materialized='table'`.
 5. Reference the seed using `{{ ref('raw_data') }}`.
-
-```

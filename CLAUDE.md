@@ -40,3 +40,6 @@
 
 ## Project Standards (Evolved)
 Permanent rules promoted from completed sprints:
+- **Profile Schema:** `main` (default). Seeds load into `main` schema — never use a custom `+schema` override for seeds in DuckDB.
+- **Seed Reference Pattern:** Always use `ref('seed_name')` to reference seeds in models. Do not create a `sources.yml` entry for seeds.
+- **External DB Connections:** When connecting to external databases via DuckDB extensions, always use `(TYPE [extension_name])` in the `ATTACH` command for network connections.
