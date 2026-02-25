@@ -61,6 +61,7 @@ models:
       Joins stg_users to stg_plans on plan_type.
       Adds discount_amount as stg_users.amount * 0.20.
       Adds customer_tier: 'high_value' when amount >= 100, else 'standard'.
+      Adds price_group: 'less than 30' when amount < 30, 'greater than 200' when amount > 200, else 'standard'.
       Filter: Excludes rows where discount_amount is 0 or NULL.
       Source: stg_users JOIN stg_plans ON plan_type.
     columns:
@@ -109,6 +110,18 @@ models:
           - not_null
           - accepted_values:
               values: ['high_value', 'standard']
+      - name: price_group
+        description: >
+          Price classification based on plan amount.
+          'less than 30' when amount < 30.
+          'greater than 200' when amount > 200.
+          'standard' for all other amounts (>= 30 AND <= 200).
+          See ACTIVE_ASSUMPTIONS.md A1 and A2 for TPM-approved logic.
+        data_type: VARCHAR
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['less than 30', 'standard', 'greater than 200']
       - name: processed_at
         description: "Timestamp when dbt processed this row (inherited from stg_users)"
         data_type: TIMESTAMP

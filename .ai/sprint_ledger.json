@@ -12,7 +12,14 @@
     "env_verified": true,
     "last_verified": "2026-02-20"
   },
-  "active_sprint": null,
+  "active_sprint": {
+    "sprint_id": "coding_cats_sprint_07",
+    "status": "IN_PROGRESS",
+    "started": "2026-02-24",
+    "goal": "Add price_group classification column to plans model",
+    "current_phase": "phase_0",
+    "artifacts": []
+  },
   "history": [
     {
       "sprint_id": "coding_cats_sprint_01",
