@@ -36,8 +36,11 @@ When a sprint is initialized, you MUST:
    - **Create PR (if missing):** If no PR exists, run:
      `gh pr create --fill --assignee "@me" --body-file .ai/ACTIVE_ASSUMPTIONS.md`
    - **Update Status:** Set `sprint_ledger.json` status to `HITL_PENDING`.
-   - **Launch Poller:** Run `nohup bash .ai/poll_approval.sh > .ai/poller.log 2>&1 &`.
-   - **Halt:** Notify User that the PR is assigned to them for review.
+   - **Halt:** Notify User that the PR is assigned to them for review. End the agent turn.
+   **RESUME:** When the User sends a message to continue:
+   - **Verify Approval:** Run `gh pr view --json labels --jq '.labels[].name'` and confirm `approved-by-tpm` is present.
+   - If approved: Set ledger status to `APPROVED` and proceed to Phase 2.
+   - If NOT approved: Inform User the PR is still pending. Do NOT proceed.
 4. **Phase 2 (Transformer):** Once `APPROVED`, Bea writes SQL. She is FORBIDDEN from reading requirements; she only sees the technical contract.
 5. **Phase 3 (Auditor):** Audrey (Opus) performs cross-reference audit (Requirements vs. Assumptions vs. SQL).
 6. **Phase 4 (DevOps):** Execute Mode 2 of `04_devops.md` to validate the Airflow DAG.
@@ -60,6 +63,16 @@ When triggered, execute ALL phases sequentially. Verify exit criteria:
 - Be concise and technical.
 - Use Markdown for all internal documentation.
 
+## 🔁 Sprint Reset Protocol
+When the User requests a sprint reset (NOT a wrap-up), execute these steps:
+1. **Read** `active_sprint.artifacts` from the ledger.
+2. **Discard changes:** For each artifact, run `git checkout -- <file>` to restore the working tree version.
+3. **Delete new files:** For each artifact or sprint-generated file that is untracked, delete it.
+4. **Clean up:** Delete `.ai/ACTIVE_ASSUMPTIONS.md` and `.ai/FIX_LOG.md` if they exist.
+5. **Null the sprint:** Set `active_sprint` to `null` in the ledger. Do NOT move it to history.
+6. **Do NOT touch** `SPRINT_REQUIREMENTS.md` — requirements are preserved for re-run.
+7. **Report:** List every file restored or deleted, and confirm the ledger is reset.
+
 ## 🧹 Sprint Wrap-Up & Reset Protocol (Pre-Merge)
 Execute these steps when Phase 4 is complete and the TPM requests a wrap-up:
 
@@ -68,7 +81,7 @@ Execute these steps when Phase 4 is complete and the TPM requests a wrap-up:
 3. **Generate Summary:** Write `sprint_[N]_summary.md` (see Archive Template).
 4. **Rule Promotion:** Scan for "Global" rules and append to `CLAUDE.md`.
 5. **Update Ledger:** Move `active_sprint` to `history`, increment version, set `active_sprint: null`.
-6. **Workspace Reset:** Clear requirements and delete temporary logs (`debug.log`, `FIX_LOG.md`, `poller.log`).
+6. **Workspace Reset:** Replace `/.ai/SPRINT_REQUIREMENTS.md` with the contents of `/.ai/SPRINT_REQUIREMENTS_TEMPLATE.md`. Delete temporary logs (`debug.log`, `FIX_LOG.md`).
 
 ### Archive Template
 When archiving, write `docs/archive/sprint_[N]/sprint_[N]_summary.md` with this structure:

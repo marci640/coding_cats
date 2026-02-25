@@ -1,25 +1,22 @@
 {
   "project_metadata": {
     "project": "coding_cats",
-    "current_version": "1.6.0",
-    "last_updated": "2026-02-21"
+    "current_version": "1.7.0",
+    "last_updated": "2026-02-25"
   },
   "environment_state": {
     "python_version": "3.11.6",
     "dbt_version": "1.11.6",
-    "installed_drivers": ["dbt-core==1.11.6", "dbt-duckdb==1.10.1", "duckdb==1.4.2"],
+    "installed_drivers": [
+      "dbt-core==1.11.6",
+      "dbt-duckdb==1.10.1",
+      "duckdb==1.4.2"
+    ],
     "database": "duckdb",
     "env_verified": true,
     "last_verified": "2026-02-20"
   },
-  "active_sprint": {
-    "sprint_id": "coding_cats_sprint_07",
-    "status": "IN_PROGRESS",
-    "started": "2026-02-24",
-    "goal": "Add price_group classification column to plans model",
-    "current_phase": "phase_1.5_assumption_gate",
-    "artifacts": ["dbt_project/models/intermediate/schema.yml", ".ai/ACTIVE_ASSUMPTIONS.md"]
-  },
+  "active_sprint": null,
   "history": [
     {
       "sprint_id": "coding_cats_sprint_01",
@@ -93,6 +90,16 @@
       ],
       "requirements_path": "docs/archive/sprint_06/sprint_06_requirements.md",
       "summary_path": "docs/archive/sprint_06/sprint_06_summary.md"
+    },
+    {
+      "sprint_id": "coding_cats_sprint_07",
+      "closed_date": "2026-02-25",
+      "artifacts": [
+        "dbt_project/models/intermediate/schema.yml",
+        "dbt_project/models/intermediate/int_plans.sql"
+      ],
+      "requirements_path": "docs/archive/sprint_07/sprint_07_requirements.md",
+      "summary_path": "docs/archive/sprint_07/sprint_07_summary.md"
     }
   ]
 }

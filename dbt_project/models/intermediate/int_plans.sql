@@ -13,6 +13,11 @@ SELECT
     p.benefit,
     r.amount * 0.20 AS discount_amount,
     CASE WHEN r.amount >= 100 THEN 'high_value' ELSE 'standard' END AS customer_tier,
+    CASE
+        WHEN r.amount < 30 THEN 'less than 30'
+        WHEN r.amount > 200 THEN 'greater than 200'
+        ELSE 'standard'
+    END AS price_group,
     r.processed_at
 FROM {{ ref('stg_users') }} AS r
 INNER JOIN {{ ref('stg_plans') }} AS p
