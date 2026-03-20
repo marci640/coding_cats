@@ -122,6 +122,16 @@ models:
           - not_null
           - accepted_values:
               values: ['less than 30', 'standard', 'greater than 200']
+      - name: is_high_value
+        description: "Boolean flag: TRUE when plan_type IN ('premium', 'enterprise'), FALSE otherwise"
+        data_type: BOOLEAN
+        tests:
+          - not_null
+      - name: days_since_signup
+        description: "Integer: Number of days between signup_date and current date (CURRENT_DATE - signup_date)"
+        data_type: INTEGER
+        tests:
+          - not_null
       - name: processed_at
         description: "Timestamp when dbt processed this row (inherited from stg_users)"
         data_type: TIMESTAMP

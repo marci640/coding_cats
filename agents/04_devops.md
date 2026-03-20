@@ -28,38 +28,22 @@ Run this mode when the Lead Agent calls you at sprint initialization.
 Run this mode when the Auditor has passed and the pipeline is ready for orchestration.
 
 ### Steps
-1. Verify `dags/dbt_csv_dag.py` exists. If not, create it using the template below.
-2. Validate DAG Python syntax: `python -c "import ast; ast.parse(open('dags/dbt_csv_dag.py').read()); print('Syntax OK')"`.
-3. Confirm the DAG task chain is `dbt_seed >> dbt_run >> dbt_test` with `@daily` schedule.
-4. Report: `PHASE 4 PASS — DAG syntax valid.`
+1. **Check existing DAG:** Read `dags/dbt_csv_dag.py` if it exists.
+2. **Discover current models:** List all `.sql` files in `dbt_project/models/staging/` and `dbt_project/models/intermediate/` to determine what the DAG should run.
+3. **Validate or generate DAG:**
+   - If the DAG exists and already covers all discovered models → validate syntax only
+   - If the DAG is missing or outdated → generate a new one dynamically (see generation rules below)
+4. **Syntax check:** Run `python -c "import ast; ast.parse(open('dags/dbt_csv_dag.py').read()); print('Syntax OK')"`
+5. **Report:** `PHASE 4 PASS — DAG syntax valid, covers [N] models.`
 
-### DAG Template (if file is missing)
-```python
-from datetime import datetime, timedelta
-from pathlib import Path
-from airflow import DAG
-from airflow.operators.bash import BashOperator
+### DAG Generation Rules (if creating or updating)
+When generating `dags/dbt_csv_dag.py`:
+- Use Airflow 2.x pattern with `BashOperator`
+- Set `schedule="@daily"`, `catchup=False`, `start_date=datetime(2025, 1, 1)`
+- Task chain: `dbt_seed >> dbt_run >> dbt_test`
+- The `dbt run` task MUST run ALL current models — use `dbt run` without `--models` filter, or dynamically build the model list from discovered `.sql` files
+- The `dbt test` task should test all models: `dbt test`
+- Use `Path(__file__).resolve().parent.parent / "dbt_project"` for paths
+- Use `venv/bin/dbt` or rely on the default dbt in PATH depending on environment
 
-DBT_PROJECT_DIR = Path(__file__).resolve().parent.parent / "dbt_project"
-DBT_PROFILES_DIR = DBT_PROJECT_DIR
-
-DEFAULT_ARGS = {
-    "owner": "data-engineering",
-    "depends_on_past": False,
-    "retries": 1,
-    "retry_delay": timedelta(minutes=5),
-}
-
-with DAG(
-    dag_id="dbt_csv_pipeline",
-    default_args=DEFAULT_ARGS,
-    schedule="@daily",
-    start_date=datetime(2025, 1, 1),
-    catchup=False,
-    tags=["dbt", "csv", "staging"],
-) as dag:
-    dbt_seed = BashOperator(task_id="dbt_seed", bash_command=f"cd {DBT_PROJECT_DIR} && dbt seed --profiles-dir {DBT_PROFILES_DIR}")
-    dbt_run = BashOperator(task_id="dbt_run", bash_command=f"cd {DBT_PROJECT_DIR} && dbt run --models staging.stg_raw_data --profiles-dir {DBT_PROFILES_DIR}")
-    dbt_test = BashOperator(task_id="dbt_test", bash_command=f"cd {DBT_PROJECT_DIR} && dbt test --models staging.stg_raw_data --profiles-dir {DBT_PROFILES_DIR}")
-    dbt_seed >> dbt_run >> dbt_test
-```
+**Do NOT copy a hardcoded template.** Always generate based on current project state.

@@ -13,5 +13,8 @@
 ### Technical Dependencies
 [List any technical requirements, packages, or infrastructure needed]
 
+### Approved Assumptions
+[None, or list only assumptions that were explicitly approved through HITL; this section is the replayable record archived with the sprint requirements]
+
 ### Permanent Rules (will be promoted to CLAUDE.md on sprint close)
 [List any rules that should become global project standards]

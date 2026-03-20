@@ -19,5 +19,9 @@
 ### Technical Dependencies
 - None. Uses existing seeds and models.
 
+### Approved Assumptions
+- **A1:** Use `'standard'` as the default `price_group` for amounts greater than or equal to 30 and less than or equal to 200.
+- **A2:** Use strict boundary operators as written: `< 30` maps to `'less than 30'` and `> 200` maps to `'greater than 200'`. Amounts exactly equal to 30 or 200 fall into the default `'standard'` group.
+
 ### Permanent Rules (will be promoted to CLAUDE.md on sprint close)
 - None

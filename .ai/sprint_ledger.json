@@ -1,8 +1,8 @@
 {
   "project_metadata": {
     "project": "coding_cats",
-    "current_version": "1.7.0",
-    "last_updated": "2026-02-25"
+    "current_version": "1.8.0",
+    "last_updated": "2026-03-19"
   },
   "environment_state": {
     "python_version": "3.11.6",
@@ -100,6 +100,17 @@
       ],
       "requirements_path": "docs/archive/sprint_07/sprint_07_requirements.md",
       "summary_path": "docs/archive/sprint_07/sprint_07_summary.md"
+    },
+    {
+      "sprint_id": "coding_cats_sprint_08",
+      "closed_date": "2026-03-19",
+      "artifacts": [
+        "dbt_project/models/intermediate/schema.yml",
+        "dbt_project/models/intermediate/int_plans.sql",
+        "dags/dbt_csv_dag.py"
+      ],
+      "requirements_path": "docs/archive/sprint_08/sprint_08_requirements.md",
+      "summary_path": "docs/archive/sprint_08/sprint_08_summary.md"
     }
   ]
 }
