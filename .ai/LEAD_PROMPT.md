@@ -34,7 +34,7 @@ When a sprint is initialized, you MUST:
    **CHECK:** If `ACTIVE_ASSUMPTIONS.md` is NOT empty:
    - **PR Verification:** Check if a PR exists: `gh pr view --json url`.
    - **Create PR (if missing):** If no PR exists, run:
-     `gh pr create --fill --assignee "@me" --body-file .ai/ACTIVE_ASSUMPTIONS.md`
+     `gh pr create --fill --assignee "@me" --reviewer "marci640" --body-file .ai/ACTIVE_ASSUMPTIONS.md`
    - **Update Status:** Set `sprint_ledger.json` status to `HITL_PENDING`.
    - **Halt:** Notify User that the PR is assigned to them for review. End the agent turn.
    **RESUME:** When the User sends a message to continue:
