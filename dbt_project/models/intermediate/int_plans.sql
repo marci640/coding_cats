@@ -18,6 +18,8 @@ SELECT
         WHEN r.amount > 200 THEN 'greater than 200'
         ELSE 'standard'
     END AS price_group,
+    r.plan_type IN ('premium', 'enterprise') AS is_high_value,
+    CAST(CURRENT_DATE - r.signup_date AS INTEGER) AS days_since_signup,
     r.processed_at
 FROM {{ ref('stg_users') }} AS r
 INNER JOIN {{ ref('stg_plans') }} AS p

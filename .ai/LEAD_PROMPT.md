@@ -70,18 +70,20 @@ When the User requests a sprint reset (NOT a wrap-up), execute these steps:
 3. **Delete new files:** For each artifact or sprint-generated file that is untracked, delete it.
 4. **Clean up:** Delete `.ai/ACTIVE_ASSUMPTIONS.md` and `.ai/FIX_LOG.md` if they exist.
 5. **Null the sprint:** Set `active_sprint` to `null` in the ledger. Do NOT move it to history.
-6. **Do NOT touch** `SPRINT_REQUIREMENTS.md` — requirements are preserved for re-run.
-7. **Report:** List every file restored or deleted, and confirm the ledger is reset.
+6. **Rollback timestamp:** Restore `project_metadata.last_updated` to the previous committed value from before sprint execution.
+7. **Do NOT touch** `SPRINT_REQUIREMENTS.md` — requirements are preserved for re-run.
+8. **Report:** List every file restored or deleted, confirm `last_updated` rollback, and confirm the ledger is reset.
 
 ## 🧹 Sprint Wrap-Up & Reset Protocol (Pre-Merge)
 Execute these steps when Phase 4 is complete and the TPM requests a wrap-up:
 
 1. **Archive Vault:** Create folder `docs/archive/sprint_[N]/`.
 2. **Move Requirements:** Copy `/.ai/SPRINT_REQUIREMENTS.md` to the archive.
-3. **Generate Summary:** Write `sprint_[N]_summary.md` (see Archive Template).
-4. **Rule Promotion:** Scan for "Global" rules and append to `CLAUDE.md`.
-5. **Update Ledger:** Move `active_sprint` to `history`, increment version, set `active_sprint: null`.
-6. **Workspace Reset:** Replace `/.ai/SPRINT_REQUIREMENTS.md` with the contents of `/.ai/SPRINT_REQUIREMENTS_TEMPLATE.md`. Delete temporary logs (`debug.log`, `FIX_LOG.md`).
+3. **Consolidate Assumptions:** If `/.ai/ACTIVE_ASSUMPTIONS.md` exists and is non-empty, write the approved assumptions into the `### Approved Assumptions` section of the archived `sprint_[N]_requirements.md`.
+4. **Generate Summary:** Write `sprint_[N]_summary.md` (see Archive Template).
+5. **Rule Promotion:** Scan for "Global" rules and append to `CLAUDE.md`.
+6. **Update Ledger:** Move `active_sprint` to `history`, increment version, set `active_sprint: null`.
+7. **Workspace Reset:** Replace `/.ai/SPRINT_REQUIREMENTS.md` with the contents of `/.ai/SPRINT_REQUIREMENTS_TEMPLATE.md`. Delete temporary logs (`debug.log`, `FIX_LOG.md`, `.ai/ACTIVE_ASSUMPTIONS.md`).
 
 ### Archive Template
 When archiving, write `docs/archive/sprint_[N]/sprint_[N]_summary.md` with this structure:

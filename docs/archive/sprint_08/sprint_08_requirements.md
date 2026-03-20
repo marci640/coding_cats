@@ -1,5 +1,5 @@
 ## Sprint Requirements
-<!-- Sprint version: 1.8.0 | Started: 2026-3-19 -->
+<!-- Sprint version: 1.8.0 | Started: 2026-03-19 -->
 <!-- Sprint ID: coding_cats_sprint_08 -->
 
 ### Business Rules
