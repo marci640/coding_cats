@@ -19,7 +19,7 @@
   "active_sprint": {
     "sprint_id": "coding_cats_sprint_09",
     "started_date": "2026-03-20",
-    "status": "HITL_PENDING",
+    "status": "COMPLETE",
     "goal": "Deliver a production-ready customer health and monetization layer by combining plan value, engagement, support burden, and referral quality into a unified risk-scoring output.",
     "technical_dependencies": [
       "dbt 1.7+ project conventions remain required.",
@@ -30,7 +30,11 @@
     "requirements_path": ".ai/SPRINT_REQUIREMENTS.md",
     "artifacts": [
       ".ai/ACTIVE_ASSUMPTIONS.md",
-      "dbt_project/models/intermediate/schema.yml"
+      "dbt_project/models/intermediate/schema.yml",
+      "dbt_project/models/intermediate/int_plans.sql",
+      "dbt_project/models/intermediate/int_user_stats.sql",
+      "dbt_project/models/intermediate/int_customer_health.sql",
+      "dbt_project/models/intermediate/user_summary.sql"
     ]
   },
   "history": [

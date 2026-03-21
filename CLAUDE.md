@@ -46,3 +46,4 @@ Permanent rules promoted from completed sprints:
 - **dbt_project.yml Immutability:** Never modify `dbt_project.yml` during a sprint run. Exception: seed configuration changes only.
 - **Sprint Reset Timestamp Rollback:** During a sprint reset, restore `project_metadata.last_updated` in `/.ai/sprint_ledger.json` to the pre-sprint committed value.
 - **Assumptions Consolidation Rule:** `/.ai/ACTIVE_ASSUMPTIONS.md` is temporary HITL state only. During sprint wrap-up, consolidate approved assumptions into the `### Approved Assumptions` section of the archived `sprint_[N]_requirements.md`.
+- **Default Preflight Safety Gate:** Resolve all upstream table/model readiness issues for sprint-touched models before any full `dbt run` or `dbt test`.
