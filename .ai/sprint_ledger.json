@@ -1,8 +1,8 @@
 {
   "project_metadata": {
     "project": "coding_cats",
-    "current_version": "1.9.0",
-    "last_updated": "2026-03-20"
+    "current_version": "1.10.0",
+    "last_updated": "2026-03-21"
   },
   "environment_state": {
     "python_version": "3.9.6",
@@ -16,27 +16,7 @@
     "env_verified": true,
     "last_verified": "2026-03-20"
   },
-  "active_sprint": {
-    "sprint_id": "coding_cats_sprint_09",
-    "started_date": "2026-03-20",
-    "status": "COMPLETE",
-    "goal": "Deliver a production-ready customer health and monetization layer by combining plan value, engagement, support burden, and referral quality into a unified risk-scoring output.",
-    "technical_dependencies": [
-      "dbt 1.7+ project conventions remain required.",
-      "SQL dialect must remain Snowflake/DuckDB compatible with uppercase SQL keywords.",
-      "Airflow DAG (dags/dbt_csv_dag.py) should continue running dbt seed/run/test successfully after model changes.",
-      "No net-new Python package is required unless a lightweight utility for validation is explicitly needed."
-    ],
-    "requirements_path": ".ai/SPRINT_REQUIREMENTS.md",
-    "artifacts": [
-      ".ai/ACTIVE_ASSUMPTIONS.md",
-      "dbt_project/models/intermediate/schema.yml",
-      "dbt_project/models/intermediate/int_plans.sql",
-      "dbt_project/models/intermediate/int_user_stats.sql",
-      "dbt_project/models/intermediate/int_customer_health.sql",
-      "dbt_project/models/intermediate/user_summary.sql"
-    ]
-  },
+  "active_sprint": null,
   "history": [
     {
       "sprint_id": "coding_cats_sprint_01",
@@ -131,6 +111,20 @@
       ],
       "requirements_path": "docs/archive/sprint_08/sprint_08_requirements.md",
       "summary_path": "docs/archive/sprint_08/sprint_08_summary.md"
+    },
+    {
+      "sprint_id": "coding_cats_sprint_09",
+      "closed_date": "2026-03-21",
+      "artifacts": [
+        ".ai/ACTIVE_ASSUMPTIONS.md",
+        "dbt_project/models/intermediate/schema.yml",
+        "dbt_project/models/intermediate/int_plans.sql",
+        "dbt_project/models/intermediate/int_user_stats.sql",
+        "dbt_project/models/intermediate/int_customer_health.sql",
+        "dbt_project/models/intermediate/user_summary.sql"
+      ],
+      "requirements_path": "docs/archive/sprint_09/sprint_09_requirements.md",
+      "summary_path": "docs/archive/sprint_09/sprint_09_summary.md"
     }
   ]
 }

@@ -47,3 +47,5 @@ Permanent rules promoted from completed sprints:
 - **Sprint Reset Timestamp Rollback:** During a sprint reset, restore `project_metadata.last_updated` in `/.ai/sprint_ledger.json` to the pre-sprint committed value.
 - **Assumptions Consolidation Rule:** `/.ai/ACTIVE_ASSUMPTIONS.md` is temporary HITL state only. During sprint wrap-up, consolidate approved assumptions into the `### Approved Assumptions` section of the archived `sprint_[N]_requirements.md`.
 - **Default Preflight Safety Gate:** Resolve all upstream table/model readiness issues for sprint-touched models before any full `dbt run` or `dbt test`.
+- **Score Threshold Assumptions:** If score thresholds are ambiguous, they must be explicitly captured as approved assumptions before SQL merge.
+- **Risk Classification Standards:** Any risk classification column must have `accepted_values` tests and documented business definitions.
