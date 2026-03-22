@@ -1,20 +1,20 @@
 {
   "project_metadata": {
     "project": "coding_cats",
-    "current_version": "1.8.0",
-    "last_updated": "2026-03-19"
+    "current_version": "1.10.0",
+    "last_updated": "2026-03-21"
   },
   "environment_state": {
-    "python_version": "3.11.6",
-    "dbt_version": "1.11.6",
+    "python_version": "3.9.6",
+    "dbt_version": "1.10.5",
     "installed_drivers": [
-      "dbt-core==1.11.6",
-      "dbt-duckdb==1.10.1",
-      "duckdb==1.4.2"
+      "dbt-core==1.10.5",
+      "dbt-duckdb==1.10.0",
+      "duckdb==1.4.4"
     ],
     "database": "duckdb",
     "env_verified": true,
-    "last_verified": "2026-02-20"
+    "last_verified": "2026-03-20"
   },
   "active_sprint": null,
   "history": [
@@ -111,6 +111,20 @@
       ],
       "requirements_path": "docs/archive/sprint_08/sprint_08_requirements.md",
       "summary_path": "docs/archive/sprint_08/sprint_08_summary.md"
+    },
+    {
+      "sprint_id": "coding_cats_sprint_09",
+      "closed_date": "2026-03-21",
+      "artifacts": [
+        ".ai/ACTIVE_ASSUMPTIONS.md",
+        "dbt_project/models/intermediate/schema.yml",
+        "dbt_project/models/intermediate/int_plans.sql",
+        "dbt_project/models/intermediate/int_user_stats.sql",
+        "dbt_project/models/intermediate/int_customer_health.sql",
+        "dbt_project/models/intermediate/user_summary.sql"
+      ],
+      "requirements_path": "docs/archive/sprint_09/sprint_09_requirements.md",
+      "summary_path": "docs/archive/sprint_09/sprint_09_summary.md"
     }
   ]
 }

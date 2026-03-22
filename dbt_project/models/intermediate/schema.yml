@@ -62,6 +62,7 @@ models:
       Adds discount_amount as stg_users.amount * 0.20.
       Adds customer_tier: 'high_value' when amount >= 100, else 'standard'.
       Adds price_group: 'less than 30' when amount < 30, 'greater than 200' when amount > 200, else 'standard'.
+      Adds plan_value_band and plan_rank for downstream health scoring.
       Filter: Excludes rows where discount_amount is 0 or NULL.
       Source: stg_users JOIN stg_plans ON plan_type.
     columns:
@@ -122,6 +123,26 @@ models:
           - not_null
           - accepted_values:
               values: ['less than 30', 'standard', 'greater than 200']
+      - name: plan_value_band
+        description: >
+          Plan value segmentation for downstream scoring.
+          Assumed buckets are `entry`, `growth`, `premium`, and `strategic`.
+          See ACTIVE_ASSUMPTIONS.md A1.
+        data_type: VARCHAR
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['entry', 'growth', 'premium', 'strategic']
+      - name: plan_rank
+        description: >
+          Numeric plan ordering used for downstream joins and score weighting.
+          Assumed mapping is basic=1, premium=2, enterprise=3.
+          See ACTIVE_ASSUMPTIONS.md A2.
+        data_type: INTEGER
+        tests:
+          - not_null
+          - accepted_values:
+              values: [1, 2, 3]
       - name: is_high_value
         description: "Boolean flag: TRUE when plan_type IN ('premium', 'enterprise'), FALSE otherwise"
         data_type: BOOLEAN
@@ -209,6 +230,7 @@ models:
       Intermediate user statistics aggregation.
       Combines user data with usage hours, phone calls, and enterprise status.
       Joins stg_users (base) with aggregated usage_hours, phone_log, and enterprise_accounts.
+      Adds engagement and support burden contract fields for downstream health scoring.
       Source: stg_users LEFT JOIN usage_hours, phone_log, enterprise_accounts.
     columns:
       - name: id
@@ -237,11 +259,39 @@ models:
       - name: total_usage_hours
         description: "Sum of all usage hours for this user (NULL if no usage data)"
         data_type: "DECIMAL(10,2)"
+        tests:
+          - not_null
       - name: total_phone_calls
         description: "Count of all phone calls for this user (0 if no calls)"
         data_type: INTEGER
         tests:
           - not_null
+      - name: engagement_score
+        description: >
+          Bounded engagement score on a 0-100 scale derived from usage and support activity.
+          Usage contributes more heavily than phone interactions.
+          See ACTIVE_ASSUMPTIONS.md A3.
+        data_type: "DECIMAL(5,2)"
+        tests:
+          - not_null
+      - name: support_burden_flag
+        description: >
+          TRUE when support activity is considered unusually high for a single customer.
+          Assumed threshold is total_phone_calls >= 2.
+          See ACTIVE_ASSUMPTIONS.md A4.
+        data_type: BOOLEAN
+        tests:
+          - not_null
+      - name: usage_recency_hint
+        description: >
+          Activity recency bucket derived from the latest available usage or phone interaction.
+          Assumed values are `current`, `recent`, `stale`, and `none`.
+          See ACTIVE_ASSUMPTIONS.md A5.
+        data_type: VARCHAR
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['current', 'recent', 'stale', 'none']
       - name: is_high_value_enterprise
         description: "TRUE if enterprise customer with contract_value_usd > 60000, else FALSE"
         data_type: BOOLEAN
@@ -253,10 +303,126 @@ models:
         tests:
           - not_null
 
+  - name: int_customer_health
+    description: >
+      Intermediate customer health scoring model.
+      Joins int_plans, int_user_stats, and referral information to produce a unified scoring contract.
+      Computes health_score, risk_band, and retention_priority for operations review.
+      Includes processed_at as CAST(CURRENT_TIMESTAMP AS TIMESTAMP).
+      See ACTIVE_ASSUMPTIONS.md A1-A11 for sprint-specific inferred thresholds and weights.
+    columns:
+      - name: id
+        description: "Unique customer identifier (Primary Key)"
+        data_type: INTEGER
+        tests:
+          - unique
+          - not_null
+      - name: name
+        description: "Customer full name"
+        data_type: VARCHAR
+        tests:
+          - not_null
+      - name: email
+        description: "Customer email address"
+        data_type: VARCHAR
+        tests:
+          - not_null
+      - name: plan_type
+        description: "Subscription tier: basic, premium, or enterprise"
+        data_type: VARCHAR
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['basic', 'premium', 'enterprise']
+      - name: amount
+        description: "Customer subscription amount in USD"
+        data_type: "DECIMAL(10,2)"
+        tests:
+          - not_null
+      - name: plan_value_band
+        description: "Plan value segmentation inherited from int_plans"
+        data_type: VARCHAR
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['entry', 'growth', 'premium', 'strategic']
+      - name: plan_rank
+        description: "Numeric plan ordering inherited from int_plans"
+        data_type: INTEGER
+        tests:
+          - not_null
+          - accepted_values:
+              values: [1, 2, 3]
+      - name: total_usage_hours
+        description: "Aggregated usage hours inherited from int_user_stats"
+        data_type: "DECIMAL(10,2)"
+        tests:
+          - not_null
+      - name: total_phone_calls
+        description: "Aggregated phone call count inherited from int_user_stats"
+        data_type: INTEGER
+        tests:
+          - not_null
+      - name: engagement_score
+        description: "Bounded engagement score on a 0-100 scale"
+        data_type: "DECIMAL(5,2)"
+        tests:
+          - not_null
+      - name: support_burden_flag
+        description: "TRUE when support activity is unusually high"
+        data_type: BOOLEAN
+        tests:
+          - not_null
+      - name: usage_recency_hint
+        description: "Activity recency bucket"
+        data_type: VARCHAR
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['current', 'recent', 'stale', 'none']
+      - name: referral_status
+        description: >
+          Referral lifecycle state carried from stg_referral_codes where available.
+          Missing referral data is treated as neutral in downstream scoring.
+          See ACTIVE_ASSUMPTIONS.md A6 and A7.
+        data_type: VARCHAR
+      - name: referral_quality_score
+        description: "Referral quality contribution used in health_score composition"
+        data_type: "DECIMAL(5,2)"
+        tests:
+          - not_null
+      - name: health_score
+        description: >
+          Composite customer health score on a documented 0-100 scale.
+          Combines plan value, engagement, support burden, and referral quality.
+          See ACTIVE_ASSUMPTIONS.md A8-A10.
+        data_type: "DECIMAL(5,2)"
+        tests:
+          - not_null
+      - name: risk_band
+        description: "Customer risk classification derived from health_score"
+        data_type: VARCHAR
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['low', 'medium', 'high']
+      - name: retention_priority
+        description: "Outreach priority bucket derived from risk_band"
+        data_type: VARCHAR
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['p1', 'p2', 'p3']
+      - name: processed_at
+        description: "Timestamp when dbt processed this row"
+        data_type: TIMESTAMP
+        tests:
+          - not_null
+
   - name: user_summary
     description: >
       Final user summary model with comprehensive user analytics.
-      Source: int_user_stats with additional computed columns.
+      Source: int_customer_health with additional enterprise indicator column.
     columns:
       - name: id
         description: "Unique user identifier (Primary Key)"
@@ -281,12 +447,26 @@ models:
           - not_null
           - accepted_values:
               values: ['basic', 'premium', 'enterprise']
+      - name: plan_value_band
+        description: "Plan value segmentation for downstream reporting"
+        data_type: VARCHAR
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['entry', 'growth', 'premium', 'strategic']
       - name: total_usage_hours
         description: "Sum of all usage hours for this user"
         data_type: "DECIMAL(10,2)"
+        tests:
+          - not_null
       - name: total_phone_calls
         description: "Count of all phone calls for this user"
         data_type: INTEGER
+        tests:
+          - not_null
+      - name: support_burden_flag
+        description: "TRUE when support activity is unusually high"
+        data_type: BOOLEAN
         tests:
           - not_null
       - name: is_high_value_enterprise
@@ -294,6 +474,25 @@ models:
         data_type: BOOLEAN
         tests:
           - not_null
+      - name: health_score
+        description: "Composite customer health score on a 0-100 scale"
+        data_type: "DECIMAL(5,2)"
+        tests:
+          - not_null
+      - name: risk_band
+        description: "Customer risk classification derived from health_score"
+        data_type: VARCHAR
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['low', 'medium', 'high']
+      - name: retention_priority
+        description: "Outreach priority bucket derived from risk_band"
+        data_type: VARCHAR
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['p1', 'p2', 'p3']
       - name: is_enterprise
         description: "TRUE if plan_type = 'enterprise', else FALSE"
         data_type: BOOLEAN

@@ -1,24 +1,26 @@
 ## Sprint Requirements
-<!-- Sprint version: 1.8.0 | Started: 2026-3-19 -->
-<!-- Sprint ID: coding_cats_sprint_08 -->
+<!-- Sprint version: [VERSION] | Started: [DATE] -->
 
 ### Business Rules
-- **Filter:** Continue excluding users where `signup_date < '2025-01-01'`
-- **Constraint:** Only `premium` and `enterprise` plan users should be flagged as high-value
+[Define the business logic and constraints for this sprint]
 
 ### Transformation Logic
-- **Modify model:** `int_plans`
-- **Add column:** `is_high_value` — boolean flag, `TRUE` when `plan_type IN ('premium', 'enterprise')`, otherwise `FALSE`
-- **Add column:** `days_since_signup` — integer, calculated as `CURRENT_DATE - signup_date`
+[Specify the data transformation requirements]
 
 ### New Models / Sources
-None — this sprint modifies an existing intermediate model only.
+[List new models, sources, or changes to existing models]
+
+### Execution Prerequisites
+[List sprint-specific upstream inputs and preflight checks not already covered by permanent project standards in CLAUDE.md.]
 
 ### Technical Dependencies
-None — no new packages required.
+[List any technical requirements, packages, or infrastructure needed]
 
 ### Approved Assumptions
-None
+[None, or list only assumptions that were explicitly approved through HITL; this section is the replayable record archived with the sprint requirements]
+
+### Acceptance Criteria
+[List concrete success criteria, including required model builds, test expectations, and any upstream readiness conditions that must be satisfied before the sprint can be considered complete.]
 
 ### Permanent Rules (will be promoted to CLAUDE.md on sprint close)
-None
+[List any rules that should become global project standards]

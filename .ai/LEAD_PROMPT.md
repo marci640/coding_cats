@@ -34,11 +34,12 @@ When a sprint is initialized, you MUST:
    **CHECK:** If `ACTIVE_ASSUMPTIONS.md` is NOT empty:
    - **PR Verification:** Check if a PR exists: `gh pr view --json url`.
    - **Create PR (if missing):** If no PR exists, run:
-     `gh pr create --fill --assignee "@me" --body-file .ai/ACTIVE_ASSUMPTIONS.md`
+     `gh pr create --fill --assignee "@me" --reviewer "marci640" --body-file .ai/ACTIVE_ASSUMPTIONS.md`
    - **Update Status:** Set `sprint_ledger.json` status to `HITL_PENDING`.
    - **Halt:** Notify User that the PR is assigned to them for review. End the agent turn.
    **RESUME:** When the User sends a message to continue:
    - **Verify Approval:** Run `gh pr view --json labels --jq '.labels[].name'` and confirm `approved-by-tpm` is present.
+   - **Sync assumptions:** If approved, run `gh pr view --json body --jq '.body' > .ai/ACTIVE_ASSUMPTIONS.md` to overwrite the local file with the latest PR body — the TPM may have edited assumptions during review.
    - If approved: Set ledger status to `APPROVED` and proceed to Phase 2.
    - If NOT approved: Inform User the PR is still pending. Do NOT proceed.
 4. **Phase 2 (Transformer):** Once `APPROVED`, Bea writes SQL. She is FORBIDDEN from reading requirements; she only sees the technical contract.
