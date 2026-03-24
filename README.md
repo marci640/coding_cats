@@ -16,62 +16,75 @@ The project is designed to be **"Copilot-Native."** We use hidden and specialize
 
 ---
 
-## 🛠 Usage Instructions (Copilot Workflow)
+## 🛠 Running Sprints (Detailed Workflow)
 
-### 1. The "Project Charter" Initialization
+### 1) Prepare the sprint contract
 
-Before starting, ensure `CLAUDE.md` is in the root. When you open Copilot Chat, it will automatically index this file.
+Before chat execution, fill `.ai/SPRINT_REQUIREMENTS.md` completely:
+- business rules
+- transformation logic
+- model/source changes
+- execution prerequisites
+- acceptance criteria
 
-> **TPM Tip:** If Copilot tries to use a different SQL dialect, remind it: *"Refer to CLAUDE.md for the source of truth."*
+Keep `CLAUDE.md` in repo root so Copilot applies project standards automatically.
 
-### 2. Starting a New Sprint
+### 2) Initialize sprint state (Phase 0 gate)
 
-**Before opening Copilot Chat**, populate `.ai/SPRINT_REQUIREMENTS.md` with the sprint's business rules, transformation logic, and any new dependencies. The template includes a `Permanent Rules` section for anything that should survive into `CLAUDE.md`.
+Run initialization once per sprint. This syncs requirements into the ledger and verifies environment readiness before any implementation begins.
 
-Then kick off the sprint with the new **Governor-aware** start command:
+Expected outcomes:
+1. `active_sprint` is written in `.ai/sprint_ledger.json`
+2. environment checks run (Python/dbt/adapter/dependencies)
+3. status moves to active execution state
 
-```
-Read /.ai/LEAD_PROMPT.md and CLAUDE.md.
-Initialize 'sprint_name' by syncing SPRINT_REQUIREMENTS.md into the ledger and verifying the environment.
-```
+### 3) Execute Architect → HITL → Transformer → Auditor → DevOps
 
-This single command causes the Lead Agent to:
-1. Extract `sprint_id`, `goals`, and `technical_dependencies` from `SPRINT_REQUIREMENTS.md`
-2. Sync the new sprint into `active_sprint` in `sprint_ledger.json`
-3. Check `env_verified` — if false or new dependencies are listed, DevOps runs automatically before any other phase
+The orchestrator enforces sequencing and quality gates:
+- Architect writes/updates technical contract (`schema.yml`)
+- Assumptions gate opens PR when assumptions exist
+- Transformer implements SQL from contract
+- Auditor validates compile + tests
+- DevOps validates DAG syntax and coverage
 
-### 3. Running the Agent Phases
+Important gate behavior:
+- If assumptions require TPM review, execution pauses at `HITL_PENDING`
+- Resume only after `approved-by-tpm` label is present
+- On resume, latest PR body is pulled into `.ai/ACTIVE_ASSUMPTIONS.md` before Transformer continues
+- Upstream readiness issues must be resolved before full `dbt run`/`dbt test`
 
-The Lead Agent can run all phases automatically in a single command:
+### 4) Continue after pause
 
-```
-Read #file:.ai/LEAD_PROMPT.md and CLAUDE.md. Run the full sprint.
-```
+Use `continue` (or `continue sprint`) after you apply TPM label or fix blockers. The lead prompt re-checks gate conditions and proceeds from the correct phase.
 
-This chains: DevOps (env check) → Architect → Transformer → Auditor → DevOps (DAG) with automatic quality gates between each phase.
+### 5) Wrap up before merge
 
-Alternatively, run phases individually:
+Wrap-up archives sprint artifacts, promotes permanent rules, updates ledger history, and resets `.ai/SPRINT_REQUIREMENTS.md` for the next sprint.
 
-| Phase | Prompt |
-|-------|--------|
-| **Architect** | `run #file:agents/01_architect.md` |
-| **Transformer** | `run #file:agents/02_transformer.md` |
-| **Auditor** | `audit via #file:agents/03_auditor.md` |
-| **DevOps** | `execute #file:agents/04_devops.md` |
+Outputs include:
+- `docs/archive/sprint_[N]/sprint_[N]_requirements.md`
+- `docs/archive/sprint_[N]/sprint_[N]_summary.md`
+- `active_sprint: null` in ledger
 
-### 4. Continuous Governance
+## 🔧 Advanced: Individual Phase Execution
 
-1. **Review the Ghost Text:** Before hitting `Tab`, ensure the logic matches the **Definition of Done** in your Charter.
-2. **Iterative Correction:** If Copilot makes a mistake, don't fix the code—**fix the agent file.** Update `agents/02_transformer.md` with the new rule and ask Copilot to "Try again based on the updated instructions."
+For debugging or running a single phase in isolation:
 
-### 5. Sprint Wrap-Up & Reset
+| Action | Command |
+|---|---|
+| Run Architect only | `run #file:agents/01_architect.md` |
+| Run Transformer only | `run #file:agents/02_transformer.md` |
+| Run Auditor only | `audit via #file:agents/03_auditor.md` |
+| Run DevOps only | `execute #file:agents/04_devops.md` |
 
-Once all 4 agent phases pass, run the closing protocol **before merging the PR**. This archives the sprint summary into `docs/archive/`, promotes permanent rules to `CLAUDE.md`, updates the ledger, and resets for the next sprint:
+## ⚡ Command Cheat Sheet (Concise)
 
-```
-Use #file:.ai/LEAD_PROMPT.md to execute the Sprint Wrap-Up.
-```
+| Action | Command |
+|---|---|
+| Initialize sprint | `Read #file:.ai/LEAD_PROMPT.md and CLAUDE.md. Initialize sprint from .ai/SPRINT_REQUIREMENTS.md.` |
+| Run full sprint | `Read #file:.ai/LEAD_PROMPT.md and CLAUDE.md. Run full sprint.` |
+| Continue after HITL/blocker | `continue sprint` |
+| Wrap up sprint | `Use #file:.ai/LEAD_PROMPT.md to execute the Sprint Wrap-Up.` |
+| Reset current sprint | `Use #file:.ai/LEAD_PROMPT.md to execute Sprint Reset Protocol.` |
 
-The wrap-up produces a `docs/archive/sprint_[N]_summary.md` containing business rules applied, artifacts produced, test results, and auditor findings — all committed as part of the PR.
-
-> **TPM Tip:** Any rule flagged as `Global` or `Permanent` in `SPRINT_REQUIREMENTS.md` is automatically promoted to `CLAUDE.md`
+> **TPM Tip:** If Copilot drifts on SQL behavior, say: *"Use CLAUDE.md as source of truth."*

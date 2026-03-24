@@ -227,11 +227,13 @@ models:
 
   - name: int_user_stats
     description: >
-      Intermediate user statistics aggregation.
+      Intermediate user statistics aggregation with momentum and volatility metrics.
       Combines user data with usage hours, phone calls, and enterprise status.
       Joins stg_users (base) with aggregated usage_hours, phone_log, and enterprise_accounts.
+      Computes usage_momentum (rising/stable/declining) and usage_volatility_index for trend analysis.
       Adds engagement and support burden contract fields for downstream health scoring.
       Source: stg_users LEFT JOIN usage_hours, phone_log, enterprise_accounts.
+      See ACTIVE_ASSUMPTIONS.md A2-A3 for momentum and volatility thresholds.
     columns:
       - name: id
         description: "Unique user identifier (Primary Key, from stg_users)"
@@ -261,6 +263,34 @@ models:
         data_type: "DECIMAL(10,2)"
         tests:
           - not_null
+      - name: usage_hours_last_30d
+        description: "Sum of usage hours in the most recent 30-day window"
+        data_type: "DECIMAL(10,2)"
+        tests:
+          - not_null
+      - name: usage_hours_prev_30d
+        description: "Sum of usage hours in the 30 days prior to the most recent window"
+        data_type: "DECIMAL(10,2)"
+        tests:
+          - not_null
+      - name: usage_momentum
+        description: >
+          Period-over-period usage trend classification.
+          Values: 'rising', 'stable', or 'declining' based on month-to-month usage change.
+          See ACTIVE_ASSUMPTIONS.md A2 for threshold definition.
+        data_type: VARCHAR
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['rising', 'stable', 'declining']
+      - name: usage_volatility_index
+        description: >
+          Bounded numeric score capturing variation in usage patterns across recent periods.
+          Higher values indicate more volatile/unpredictable usage.
+          See ACTIVE_ASSUMPTIONS.md A3 for calculation method and bounds.
+        data_type: "DECIMAL(5,2)"
+        tests:
+          - not_null
       - name: total_phone_calls
         description: "Count of all phone calls for this user (0 if no calls)"
         data_type: INTEGER
@@ -270,7 +300,7 @@ models:
         description: >
           Bounded engagement score on a 0-100 scale derived from usage and support activity.
           Usage contributes more heavily than phone interactions.
-          See ACTIVE_ASSUMPTIONS.md A3.
+          See ACTIVE_ASSUMPTIONS.md A3 (Sprint 09).
         data_type: "DECIMAL(5,2)"
         tests:
           - not_null
@@ -278,7 +308,7 @@ models:
         description: >
           TRUE when support activity is considered unusually high for a single customer.
           Assumed threshold is total_phone_calls >= 2.
-          See ACTIVE_ASSUMPTIONS.md A4.
+          See ACTIVE_ASSUMPTIONS.md A4 (Sprint 09).
         data_type: BOOLEAN
         tests:
           - not_null
@@ -286,7 +316,7 @@ models:
         description: >
           Activity recency bucket derived from the latest available usage or phone interaction.
           Assumed values are `current`, `recent`, `stale`, and `none`.
-          See ACTIVE_ASSUMPTIONS.md A5.
+          See ACTIVE_ASSUMPTIONS.md A5 (Sprint 09).
         data_type: VARCHAR
         tests:
           - not_null
@@ -305,11 +335,11 @@ models:
 
   - name: int_customer_health
     description: >
-      Intermediate customer health scoring model.
-      Joins int_plans, int_user_stats, and referral information to produce a unified scoring contract.
-      Computes health_score, risk_band, and retention_priority for operations review.
+      Intermediate customer health and churn risk scoring model.
+      Joins int_plans, int_user_stats, and referral information to produce unified scoring contract.
+      Computes health_score, health_momentum_score, churn_risk_score, and intervention fields.
       Includes processed_at as CAST(CURRENT_TIMESTAMP AS TIMESTAMP).
-      See ACTIVE_ASSUMPTIONS.md A1-A11 for sprint-specific inferred thresholds and weights.
+      See ACTIVE_ASSUMPTIONS.md A1-A10 for sprint-specific logic and thresholds.
     columns:
       - name: id
         description: "Unique customer identifier (Primary Key)"
@@ -358,6 +388,18 @@ models:
         data_type: "DECIMAL(10,2)"
         tests:
           - not_null
+      - name: usage_momentum
+        description: "Usage trend classification (rising/stable/declining) inherited from int_user_stats"
+        data_type: VARCHAR
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['rising', 'stable', 'declining']
+      - name: usage_volatility_index
+        description: "Volatility score inherited from int_user_stats"
+        data_type: "DECIMAL(5,2)"
+        tests:
+          - not_null
       - name: total_phone_calls
         description: "Aggregated phone call count inherited from int_user_stats"
         data_type: INTEGER
@@ -384,23 +426,33 @@ models:
         description: >
           Referral lifecycle state carried from stg_referral_codes where available.
           Missing referral data is treated as neutral in downstream scoring.
-          See ACTIVE_ASSUMPTIONS.md A6 and A7.
+          See ACTIVE_ASSUMPTIONS.md A6-A7 (Sprint 09).
         data_type: VARCHAR
       - name: referral_quality_score
-        description: "Referral quality contribution used in health_score composition"
+        description: "Referral quality contribution used in scoring composition"
         data_type: "DECIMAL(5,2)"
         tests:
           - not_null
       - name: health_score
         description: >
-          Composite customer health score on a documented 0-100 scale.
+          Composite customer health score on a 0-100 scale.
           Combines plan value, engagement, support burden, and referral quality.
-          See ACTIVE_ASSUMPTIONS.md A8-A10.
+          See ACTIVE_ASSUMPTIONS.md A8-A10 (Sprint 09).
+        data_type: "DECIMAL(5,2)"
+        tests:
+          - not_null
+      - name: health_momentum_score
+        description: >
+          Health score adjusted for trend momentum.
+          Reflects how usage trends (rising/declining) impact baseline health.
+          See ACTIVE_ASSUMPTIONS.md A4 for weighting.
         data_type: "DECIMAL(5,2)"
         tests:
           - not_null
       - name: risk_band
-        description: "Customer risk classification derived from health_score"
+        description: >
+          Customer risk classification derived from health_score.
+          Values: 'low', 'medium', 'high'
         data_type: VARCHAR
         tests:
           - not_null
@@ -413,6 +465,32 @@ models:
           - not_null
           - accepted_values:
               values: ['p1', 'p2', 'p3']
+      - name: churn_risk_score
+        description: >
+          Unified churn risk score on a 0-100 scale.
+          Combines health_score, usage_momentum, support_burden_flag, and referral_quality_score.
+          Higher=more likely to churn. See ACTIVE_ASSUMPTIONS.md A5-A6.
+        data_type: "DECIMAL(5,2)"
+        tests:
+          - not_null
+      - name: intervention_tier
+        description: >
+          Proposed intervention urgency tier for outreach.
+          Values: 'immediate', 'near_term', 'monitor' based on churn_risk_score.
+          May be blocked for enterprise customers per completeness rules. See ACTIVE_ASSUMPTIONS.md A6, A10.
+        data_type: VARCHAR
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['immediate', 'near_term', 'monitor']
+      - name: intervention_reason
+        description: >
+          Text/code describing primary driver of assigned intervention_tier.
+          Determines which dimension (health, momentum, burden, referral) gave strongest signal.
+          See ACTIVE_ASSUMPTIONS.md A8.
+        data_type: VARCHAR
+        tests:
+          - not_null
       - name: processed_at
         description: "Timestamp when dbt processed this row"
         data_type: TIMESTAMP
@@ -421,8 +499,9 @@ models:
 
   - name: user_summary
     description: >
-      Final user summary model with comprehensive user analytics.
-      Source: int_customer_health with additional enterprise indicator column.
+      Final user summary model with comprehensive health and retention analytics.
+      Source: int_customer_health with engagement and intervention fields surfaced.
+      Surfaces churn risk, intervention tier and reason, usage momentum, and action window for operations.
     columns:
       - name: id
         description: "Unique user identifier (Primary Key)"
@@ -469,6 +548,13 @@ models:
         data_type: BOOLEAN
         tests:
           - not_null
+      - name: usage_momentum
+        description: "Usage trend classification (rising/stable/declining)"
+        data_type: VARCHAR
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['rising', 'stable', 'declining']
       - name: is_high_value_enterprise
         description: "TRUE if enterprise customer with contract_value_usd > 60000"
         data_type: BOOLEAN
@@ -476,6 +562,11 @@ models:
           - not_null
       - name: health_score
         description: "Composite customer health score on a 0-100 scale"
+        data_type: "DECIMAL(5,2)"
+        tests:
+          - not_null
+      - name: churn_risk_score
+        description: "Unified churn risk score on a 0-100 scale"
         data_type: "DECIMAL(5,2)"
         tests:
           - not_null
@@ -493,9 +584,114 @@ models:
           - not_null
           - accepted_values:
               values: ['p1', 'p2', 'p3']
+      - name: intervention_tier
+        description: "Proposed intervention urgency tier (immediate/near_term/monitor)"
+        data_type: VARCHAR
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['immediate', 'near_term', 'monitor']
+      - name: intervention_reason
+        description: "Text/code describing primary driver of assigned intervention_tier"
+        data_type: VARCHAR
+        tests:
+          - not_null
+      - name: action_window_days
+        description: >
+          Recommended number of days to contact customer.
+          Derived from churn_risk_score so higher-risk = sooner contact.
+          See ACTIVE_ASSUMPTIONS.md A7.
+        data_type: INTEGER
+        tests:
+          - not_null
       - name: is_enterprise
         description: "TRUE if plan_type = 'enterprise', else FALSE"
         data_type: BOOLEAN
+        tests:
+          - not_null
+      - name: processed_at
+        description: "Timestamp when dbt processed this row"
+        data_type: TIMESTAMP
+        tests:
+          - not_null
+
+  - name: int_retention_actions
+    description: >
+      Intermediate retention actions model.
+      Source: int_customer_health with one row per customer containing recommended outreach actions.
+      Emits action_priority, action_window_days, owner_queue, and reason_code for weekly operations workflow.
+      Primary key: id (unique customer identifier).
+      See ACTIVE_ASSUMPTIONS.md A7-A9 for derivation logic.
+    columns:
+      - name: id
+        description: "Unique customer identifier (Primary Key)"
+        data_type: INTEGER
+        tests:
+          - unique
+          - not_null
+      - name: name
+        description: "Customer full name"
+        data_type: VARCHAR
+        tests:
+          - not_null
+      - name: email
+        description: "Customer email address"
+        data_type: VARCHAR
+        tests:
+          - not_null
+      - name: plan_type
+        description: "Subscription tier: basic, premium, or enterprise"
+        data_type: VARCHAR
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['basic', 'premium', 'enterprise']
+      - name: churn_risk_score
+        description: "Churn risk score on 0-100 scale from int_customer_health"
+        data_type: "DECIMAL(5,2)"
+        tests:
+          - not_null
+      - name: intervention_tier
+        description: "Intervention urgency tier (immediate/near_term/monitor)"
+        data_type: VARCHAR
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['immediate', 'near_term', 'monitor']
+      - name: intervention_reason
+        description: "Primary driver of intervention assignment"
+        data_type: VARCHAR
+        tests:
+          - not_null
+      - name: action_priority
+        description: >
+          Computed urgency flag for sorting in operations queues.
+          Derived from intervention_tier and churn_risk_score.
+          See ACTIVE_ASSUMPTIONS.md A7.
+        data_type: VARCHAR
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['critical', 'high', 'medium', 'low']
+      - name: action_window_days
+        description: >
+          Number of days within which customer should be contacted.
+          Higher churn_risk = fewer days. See ACTIVE_ASSUMPTIONS.md A7.
+        data_type: INTEGER
+        tests:
+          - not_null
+      - name: owner_queue
+        description: >
+          Assigned team queue for handling the action (e.g. csm, support, expansion).
+          Determined based on plan_type, risk_band, and engagement profile. See ACTIVE_ASSUMPTIONS.md A9.
+        data_type: VARCHAR
+        tests:
+          - not_null
+      - name: reason_code
+        description: >
+          Coded reason for the recommended action (e.g. declining_usage, low_engagement, high_support_load).
+          Drives narrative explanations in operations workflows. See ACTIVE_ASSUMPTIONS.md A8.
+        data_type: VARCHAR
         tests:
           - not_null
       - name: processed_at
