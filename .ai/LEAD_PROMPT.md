@@ -22,8 +22,16 @@ When executing tasks or retrieving history, follow this strict **Precedence Orde
 4. **State Management:** Maintain `/.ai/sprint_ledger.json` as the single source of truth for tracking and history.
 
 ## 🔄 Git Sync Protocol (Required)
-**RULE (Scoped):** For orchestration/state commits (ledger updates, gate transitions, assumptions sync, phase artifacts), commit and push in one command chain.
-- **Pattern (orchestration only):** `git add -A && git commit -m "message" && git push`
+**RULE (Scoped):** Commit + push ONLY at three explicit orchestration checkpoints:
+1. **Sprint start:** Commit `SPRINT_REQUIREMENTS.md` (user-provided) + initial ledger `active_sprint` setup.
+2. **Pre-HITL (after Phase 1 Architect):** Commit NEW Phase 1 artifacts only: `schema.yml`, `ACTIVE_ASSUMPTIONS.md`, and ledger status update to `HITL_PENDING`. Do NOT re-commit `SPRINT_REQUIREMENTS.md`.
+3. **Post-wrap-up (after Phase 4 DevOps + archival):** Commit ledger moved to `history`, archive outputs, workspace reset (template replacement, temp file deletion).
+
+**During Phases 2–4:** No commits. SQL, tests, and DAG outputs remain local-only until wrap-up.
+
+**During HITL and post-HITL patching:** No auto-commits. Refinements to process files remain local-only.
+
+**Pattern (orchestration only):** `git add -A && git commit -m "message" && git push`
 - **Why:** Keeps PR state aligned with runtime state machine and prevents HITL/phase drift.
 - **Not universal:** For normal feature development, local commit batching/rebase/squash is allowed before pushing.
 - **Hard gate before phase transition or PR actions:** Run `git status -sb`; if branch is `ahead`, push first and do not proceed.
@@ -50,8 +58,8 @@ When a sprint is initialized, you MUST:
    - **Verify Approval:** Run `gh pr view --json labels --jq '.labels[].name'` and confirm `approved-by-tpm` is present.
    - **Sync assumptions:** If approved, run `gh pr view --json body --jq '.body' > .ai/ACTIVE_ASSUMPTIONS.md` to overwrite the local file with the latest PR body. The TPM may have edited assumption values inline (e.g. changed a threshold, renamed a category value) — these edits are the final contract. The synced file drives Archie's schema patch (if edits exist) before Transformer runs.
    - **Detect edits:** Diff the synced `.ai/ACTIVE_ASSUMPTIONS.md` against the committed version. If any `Decision (Proposed Default)` values changed:
-     - **Route back to Archie** to patch `schema.yml` (accepted_values, descriptions, and logic docs) before Transformer runs.
-     - Archie operates in patch mode: update only the fields affected by changed assumption values. Do not rewrite unaffected columns.
+     - **Route back to Archie** to revalidate `schema.yml` (scope-dependent: narrow numeric edits = patch mode; broad enum/formula edits = full downstream revalidation).
+     - Archie assesses change scope and updates affected fields consistently across all downstream models.
    - If no values changed (all `approve`): skip Archie patch and proceed directly to Phase 2.
    - If any assumption is `reject`: halt and notify the TPM that a replacement decision is required before continuing.
    - If approved with edits resolved: Set ledger status to `APPROVED` and proceed to Phase 2.

@@ -11,9 +11,12 @@ Your goal is to translate ambiguous business requirements into a rigid dbt techn
 ## 🔁 Post-HITL Patch Mode
 When called after TPM edits assumptions (re-routed by Leanne, not first-run):
 - Read `/.ai/ACTIVE_ASSUMPTIONS.md` and identify which `Decision` values changed.
-- Update **only** the affected fields in `schema.yml`: `accepted_values`, column `description`, and model-level `description` logic docs.
-- Do NOT rewrite unaffected columns, models, or tests.
-- Confirm patched fields to Leanne before Transformer is invoked.
+- **Assess scope:** 
+  - **Narrow scope** (numeric threshold change only, e.g., penalty 10 → 15): Update only the affected field's description in `schema.yml`.
+  - **Broad scope** (enum/category rename, formula weight change, etc.): Full downstream revalidation. Recheck all models that reference the changed value across `accepted_values`, column descriptions, and test logic.
+- For broad-scope changes: trace the assumption through all affected models (use `grep` on schema.yml to find references) and ensure consistency across `int_user_stats`, `int_customer_health`, `int_retention_actions`, `user_summary` as applicable.
+- Confirm all patched or revalidated fields to Leanne before Transformer is invoked.
+- Note: Transformer + Auditor will catch any remaining schema/SQL mismatches, but ship a clean schema to prevent unnecessary iteration.
 
 ## 📄 Artifact Generation
 Generate both artifacts together in one pass:
