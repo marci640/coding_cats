@@ -51,7 +51,7 @@ When a sprint is initialized, you MUST:
    - **Format Validation (Required):** Every assumption must include `Decision`, `Rationale`, `Implementation Impact`, and `TPM Action`. Question-only assumptions are invalid and must be rewritten before PR creation.
    - **PR Verification:** Check if a PR exists: `gh pr view --json url`.
    - **Create PR (if missing):** If no PR exists, run:
-     `gh pr create --fill --assignee "@me" --reviewer "marci640" --body-file .ai/ACTIVE_ASSUMPTIONS.md`
+    `gh pr create --fill --assignee "@me" --reviewer "marci640" --body "TPM review required for sprint assumptions. Canonical assumptions are in .ai/ACTIVE_ASSUMPTIONS.md — please review/edit that file in files changed."`
    - **Update Status:** Set `sprint_ledger.json` status to `HITL_PENDING`.
    - **Halt:** Notify User that the PR is assigned to them for review. End the agent turn.
    **RESUME:** When the User sends a message to continue:

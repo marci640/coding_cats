@@ -50,7 +50,9 @@ The orchestrator enforces sequencing and quality gates:
 Important gate behavior:
 - If assumptions require TPM review, execution pauses at `HITL_PENDING`
 - Resume only after `approved-by-tpm` label is present
-- On resume, latest PR body is pulled into `.ai/ACTIVE_ASSUMPTIONS.md` before Transformer continues
+- On resume, latest `.ai/ACTIVE_ASSUMPTIONS.md` from the remote branch is synced locally before Transformer continues
+- Original sprint requirements remain the business source of intent; Architect and Auditor validate alignment against them.
+- Transformer should remain contract-only (`schema.yml` + approved assumptions) to prevent interpretation drift.
 - Upstream readiness issues must be resolved before full `dbt run`/`dbt test`
 
 ### 4) Continue after pause

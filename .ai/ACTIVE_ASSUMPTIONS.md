@@ -95,14 +95,14 @@
 ---
 
 ## TPM Response Block (Edit In Place)
-For each item A1–A10, edit directly in the PR body:
+For each item A1–A10, edit directly in this file (`.ai/ACTIVE_ASSUMPTIONS.md`) via the PR "Files changed" tab:
 - Replace `approve / edit / reject` with your decision.
 - If **editing**: overwrite the `Decision (Proposed Default)` value with your preferred value inline — these edited values become the implementation contract.
 - Example: change `rising if pct_change >= 0.10` → `rising if pct_change >= 0.05` directly in the A2 block.
 
-> **How edits flow:** On `continue sprint`, the orchestrator syncs the PR body back to `.ai/ACTIVE_ASSUMPTIONS.md`. The Transformer then reads both `schema.yml` (structure) and `ACTIVE_ASSUMPTIONS.md` (exact values) to implement SQL. Your inline edits here are the final decision — no separate handoff needed.
+> **How edits flow:** On `continue sprint`, the orchestrator syncs `.ai/ACTIVE_ASSUMPTIONS.md` from the latest remote branch state. The Transformer then reads both `schema.yml` (structure) and `ACTIVE_ASSUMPTIONS.md` (exact values) to implement SQL. Your inline edits in this file are the final decision — no separate handoff needed.
 
 ---
 
 ## Next Step
-**Awaiting TPM approval.** Transformer remains BLOCKED until `approved-by-tpm` label is applied and assumptions are synced from PR body.
+**Awaiting TPM approval.** Transformer remains BLOCKED until `approved-by-tpm` label is applied and assumptions are synced from `.ai/ACTIVE_ASSUMPTIONS.md`.
