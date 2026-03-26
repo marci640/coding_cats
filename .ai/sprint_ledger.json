@@ -1,8 +1,8 @@
 {
   "project_metadata": {
     "project": "coding_cats",
-    "current_version": "1.10.0",
-    "last_updated": "2026-03-21"
+    "current_version": "1.12.0",
+    "last_updated": "2026-03-25"
   },
   "environment_state": {
     "python_version": "3.9.6",
@@ -14,10 +14,23 @@
     ],
     "database": "duckdb",
     "env_verified": true,
-    "last_verified": "2026-03-20"
+    "last_verified": "2026-03-23"
   },
   "active_sprint": null,
   "history": [
+    {
+      "sprint_id": "coding_cats_sprint_10",
+      "closed_date": "2026-03-25",
+      "artifacts": [
+        "dbt_project/models/intermediate/schema.yml",
+        "dbt_project/models/intermediate/int_user_stats.sql",
+        "dbt_project/models/intermediate/int_customer_health.sql",
+        "dbt_project/models/intermediate/int_retention_actions.sql",
+        "dbt_project/models/intermediate/user_summary.sql"
+      ],
+      "requirements_path": "docs/archive/sprint_10/sprint_10_requirements.md",
+      "summary_path": "docs/archive/sprint_10/sprint_10_summary.md"
+    },
     {
       "sprint_id": "coding_cats_sprint_01",
       "closed_date": "2026-02-14",
