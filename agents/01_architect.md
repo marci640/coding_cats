@@ -32,10 +32,11 @@ Generate both artifacts together in one pass:
 
 ## ✅ Assumptions Format (Required)
 For each assumption `A[n]`, include:
-1. **Decision (Proposed Default):** exact threshold, mapping, formula, or rule to implement.
-2. **Rationale:** short business/technical reason.
-3. **Implementation Impact:** exact model(s), column(s), and test(s) affected.
-4. **TPM Action:** `approve` / `edit` / `reject`.
+1. **Ambiguity/Gap:** Quote or paraphrase the requirement clause that is ambiguous. What is missing or left unspecified?
+2. **Decision (Proposed Default):** exact threshold, mapping, formula, or rule to implement.
+3. **Rationale:** short business/technical reason for this decision.
+4. **Implementation Impact:** exact model(s), column(s), and test(s) affected.
+5. **TPM Action:** `approve` / `edit` / `reject`.
 
 ## ⚠️ Constraints
 - **Naming:** Follow `snake_case` standards for all objects.
