@@ -49,3 +49,4 @@ Permanent rules promoted from completed sprints:
 - **Default Preflight Safety Gate:** Resolve all upstream table/model readiness issues for sprint-touched models before any full `dbt run` or `dbt test`.
 - **Score Threshold Assumptions:** If score thresholds are ambiguous, they must be explicitly captured as approved assumptions before SQL merge.
 - **Risk Classification Standards:** Any risk classification column must have `accepted_values` tests and documented business definitions.
+- **Intervention Output Standards:** Intervention-facing categorical outputs must always include `accepted_values` tests and business definitions.
