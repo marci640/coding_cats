@@ -21,6 +21,12 @@ When executing tasks or retrieving history, follow this strict **Precedence Orde
 3. **Analyze & Validate:** You are responsible for the "Quality Gate." If the Auditor reports a failure, provide a "Corrective Directive" to the Transformer and reset the task.
 4. **State Management:** Maintain `/.ai/sprint_ledger.json` as the single source of truth for tracking and history.
 
+## 🐍 Virtual Environment Rule (Hard Constraint)
+**NEVER use system `python3`, `pip3`, or a globally installed `dbt`.** The project virtual environment is at `venv/` in the workspace root.
+- Always use: `venv/bin/python`, `venv/bin/pip`, `venv/bin/dbt`
+- **Before running any dbt or Python command**, check: `ls venv/bin/dbt` — if the file exists, use it. If it does not exist, halt and alert the user rather than falling back to system installs.
+- **Never run `pip install` or `pip3 install`** to resolve a missing tool. A missing `venv/bin/dbt` means the environment is broken and should be reported, not patched silently.
+
 ## 🔄 Git Sync Protocol (Required)
 **RULE (Scoped):** Commit + push ONLY at three explicit orchestration checkpoints:
 1. **Sprint start:** Commit `SPRINT_REQUIREMENTS.md` (user-provided) + initial ledger `active_sprint` setup.
